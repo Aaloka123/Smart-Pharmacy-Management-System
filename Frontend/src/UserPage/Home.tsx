@@ -7,6 +7,7 @@ const Home: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
 
+      {/* Main content */}
       <main className="flex-grow p-6 space-y-6">
         {/* Welcome Section */}
         <div className="bg-white shadow rounded-lg p-6">
@@ -14,8 +15,8 @@ const Home: React.FC = () => {
             Welcome to PharmaCare
           </h1>
           <p className="text-gray-600 mt-2">
-            Manage your pharmacy efficiently with real-time inventory, sales,
-            and reports.
+            Smart Pharmacy Management System for efficient inventory, sales, and
+            reporting.
           </p>
         </div>
 
