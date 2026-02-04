@@ -40,9 +40,13 @@ const Medicines: React.FC = () => {
   ]);
 
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("All Categories");
 
-  const filtered = medicines.filter((med) =>
-    med.name.toLowerCase().includes(search.toLowerCase()),
+  // Filter by name and category
+  const filtered = medicines.filter(
+    (med) =>
+      med.name.toLowerCase().includes(search.toLowerCase()) &&
+      (categoryFilter === "All Categories" || med.category === categoryFilter),
   );
 
   return (
@@ -74,7 +78,11 @@ const Medicines: React.FC = () => {
             className="border rounded px-4 py-2 w-full md:w-1/2"
           />
 
-          <select className="border rounded px-4 py-2 w-full md:w-1/4">
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="border rounded px-4 py-2 w-full md:w-1/4"
+          >
             <option>All Categories</option>
             <option>Tablet</option>
             <option>Capsule</option>
@@ -83,7 +91,7 @@ const Medicines: React.FC = () => {
         </div>
 
         {/* Medicines Table */}
-        <div className="bg-white shadow-xl rounded-xl overflow-hidden border border-blue-100">
+        <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-blue-200">
           <table className="min-w-full text-sm">
             <thead className="bg-blue-600 text-white">
               <tr>
@@ -103,7 +111,7 @@ const Medicines: React.FC = () => {
                   key={med.id}
                   className={`border-b ${
                     index % 2 === 0 ? "bg-blue-50" : "bg-white"
-                  } hover:bg-blue-100 transition`}
+                  } hover:bg-blue-100 transition duration-200`}
                 >
                   <td className="px-4 py-3 font-semibold text-gray-800">
                     {med.name}
@@ -113,7 +121,7 @@ const Medicines: React.FC = () => {
                   <td className="px-4 py-3 font-medium">{med.stock}</td>
                   <td className="px-4 py-3">{med.expiry}</td>
 
-                  {/* Status Badge */}
+                  {/* Stock Status */}
                   <td className="px-4 py-3">
                     {med.stock > 50 && (
                       <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
@@ -133,7 +141,7 @@ const Medicines: React.FC = () => {
                   </td>
 
                   {/* Actions */}
-                  <td className="px-4 py-3 space-x-3">
+                  <td className="px-4 py-3 flex gap-3">
                     <button className="text-blue-700 hover:text-blue-900 font-medium">
                       Edit
                     </button>
