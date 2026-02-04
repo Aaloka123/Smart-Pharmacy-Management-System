@@ -3,77 +3,114 @@ import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(true);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Simple demo authentication
-    if (email === "admin@pharma.com" && password === "admin123") {
-      setError("");
-      navigate("/"); // Redirect to Home
+    // Demo logic
+    if (isLogin) {
+      if (email === "admin@pharma.com" && password === "admin123") {
+        navigate("/");
+      } else {
+        setError("Invalid email or password");
+      }
     } else {
-      setError("Invalid email or password");
+      if (name && email && password) {
+        alert("Account created successfully!");
+        setIsLogin(true);
+      } else {
+        setError("Please fill all fields");
+      }
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-50">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
-        <h2 className="text-3xl font-bold text-blue-700 text-center">
-          PharmaCare Login
-        </h2>
-        <p className="text-gray-500 text-center mt-2">
-          Sign in to manage your pharmacy
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300">
+      <div className="bg-white shadow-2xl rounded-2xl w-full max-w-md p-8">
+        {/* Title */}
+        <h1 className="text-3xl font-bold text-center text-blue-700">
+          PharmaCare
+        </h1>
+        <p className="text-center text-gray-500 mb-6">
+          {isLogin ? "Login to your account" : "Create a new account"}
         </p>
 
-        <form onSubmit={handleLogin} className="mt-6 space-y-4">
-          {error && <p className="text-red-600 text-sm">{error}</p>}
-
-          {/* Email */}
-          <div>
-            <label className="block text-gray-700 text-sm font-medium mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@pharma.com"
-              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-gray-700 text-sm font-medium mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="********"
-              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          {/* Submit */}
+        {/* Tabs */}
+        <div className="flex mb-6">
           <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-semibold mt-2"
+            onClick={() => setIsLogin(true)}
+            className={`w-1/2 py-2 font-semibold rounded-l-lg ${
+              isLogin ? "bg-blue-600 text-white" : "bg-gray-100"
+            }`}
           >
             Login
+          </button>
+          <button
+            onClick={() => setIsLogin(false)}
+            className={`w-1/2 py-2 font-semibold rounded-r-lg ${
+              !isLogin ? "bg-blue-600 text-white" : "bg-gray-100"
+            }`}
+          >
+            Sign Up
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {!isLogin && (
+            <div>
+              <label className="text-sm font-medium">Full Name</label>
+              <input
+                type="text"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full border px-4 py-2 rounded focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="text-sm font-medium">Email</label>
+            <input
+              type="email"
+              placeholder="admin@pharma.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border px-4 py-2 rounded focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Password</label>
+            <input
+              type="password"
+              placeholder="********"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full border px-4 py-2 rounded focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {error && <p className="text-red-600 text-sm">{error}</p>}
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-semibold"
+          >
+            {isLogin ? "Login" : "Create Account"}
           </button>
         </form>
 
         {/* Footer */}
-        <p className="text-gray-400 text-xs text-center mt-6">
-          © {new Date().getFullYear()} PharmaCare. All rights reserved.
+        <p className="text-xs text-gray-400 text-center mt-6">
+          © {new Date().getFullYear()} PharmaCare Management System
         </p>
       </div>
     </div>
