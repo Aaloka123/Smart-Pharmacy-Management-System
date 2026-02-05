@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
+import { useNavigate } from "react-router-dom";
 
 interface Medicine {
   id: number;
@@ -12,6 +13,8 @@ interface Medicine {
 }
 
 const Medicines: React.FC = () => {
+  const navigate = useNavigate();
+
   const [medicines, setMedicines] = useState<Medicine[]>([
     {
       id: 1,
@@ -42,7 +45,6 @@ const Medicines: React.FC = () => {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
 
-  // Filter by name and category
   const filtered = medicines.filter(
     (med) =>
       med.name.toLowerCase().includes(search.toLowerCase()) &&
@@ -54,34 +56,32 @@ const Medicines: React.FC = () => {
       <Header />
 
       <main className="flex-grow p-6 space-y-6">
-        {/* Page Header */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-blue-700">Medicines</h1>
-            <p className="text-gray-600 mt-1">
-              Manage and monitor pharmacy medicines
-            </p>
+            <p className="text-gray-600">Manage pharmacy medicines</p>
           </div>
 
-          <button className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 shadow">
+          <button
+            onClick={() => navigate("/add-medicine")}
+            className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700"
+          >
             + Add Medicine
           </button>
         </div>
 
-        {/* Search + Filter */}
-        <div className="bg-white shadow rounded-lg p-4 flex flex-col md:flex-row gap-4">
+        <div className="bg-white shadow rounded p-4 flex gap-4">
           <input
-            type="text"
-            placeholder="Search by medicine name..."
+            placeholder="Search medicine..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border rounded px-4 py-2 w-full md:w-1/2"
+            className="border px-4 py-2 rounded w-1/2"
           />
 
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="border rounded px-4 py-2 w-full md:w-1/4"
+            className="border px-4 py-2 rounded"
           >
             <option>All Categories</option>
             <option>Tablet</option>
@@ -90,75 +90,30 @@ const Medicines: React.FC = () => {
           </select>
         </div>
 
-        {/* Medicines Table */}
-        <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-blue-200">
-          <table className="min-w-full text-sm">
+        <div className="bg-white shadow-xl rounded overflow-hidden">
+          <table className="w-full text-sm">
             <thead className="bg-blue-600 text-white">
               <tr>
-                <th className="px-4 py-3 text-left">Name</th>
-                <th className="px-4 py-3 text-left">Category</th>
-                <th className="px-4 py-3 text-left">Price</th>
-                <th className="px-4 py-3 text-left">Stock</th>
-                <th className="px-4 py-3 text-left">Expiry</th>
-                <th className="px-4 py-3 text-left">Status</th>
-                <th className="px-4 py-3 text-left">Actions</th>
+                <th className="p-3 text-left">Name</th>
+                <th className="p-3 text-left">Category</th>
+                <th className="p-3 text-left">Price</th>
+                <th className="p-3 text-left">Stock</th>
+                <th className="p-3 text-left">Expiry</th>
               </tr>
             </thead>
 
             <tbody>
-              {filtered.map((med, index) => (
-                <tr
-                  key={med.id}
-                  className={`border-b ${
-                    index % 2 === 0 ? "bg-blue-50" : "bg-white"
-                  } hover:bg-blue-100 transition duration-200`}
-                >
-                  <td className="px-4 py-3 font-semibold text-gray-800">
-                    {med.name}
-                  </td>
-                  <td className="px-4 py-3">{med.category}</td>
-                  <td className="px-4 py-3">Rs {med.price}</td>
-                  <td className="px-4 py-3 font-medium">{med.stock}</td>
-                  <td className="px-4 py-3">{med.expiry}</td>
-
-                  {/* Stock Status */}
-                  <td className="px-4 py-3">
-                    {med.stock > 50 && (
-                      <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
-                        In Stock
-                      </span>
-                    )}
-                    {med.stock <= 50 && med.stock > 0 && (
-                      <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">
-                        Low Stock
-                      </span>
-                    )}
-                    {med.stock === 0 && (
-                      <span className="bg-red-200 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">
-                        Out of Stock
-                      </span>
-                    )}
-                  </td>
-
-                  {/* Actions */}
-                  <td className="px-4 py-3 flex gap-3">
-                    <button className="text-blue-700 hover:text-blue-900 font-medium">
-                      Edit
-                    </button>
-                    <button className="text-red-600 hover:text-red-800 font-medium">
-                      Delete
-                    </button>
-                  </td>
+              {filtered.map((med, i) => (
+                <tr key={med.id} className={i % 2 === 0 ? "bg-blue-50" : ""}>
+                  <td className="p-3">{med.name}</td>
+                  <td className="p-3">{med.category}</td>
+                  <td className="p-3">Rs {med.price}</td>
+                  <td className="p-3">{med.stock}</td>
+                  <td className="p-3">{med.expiry}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-
-          {filtered.length === 0 && (
-            <div className="text-center py-6 text-gray-500">
-              No medicines found.
-            </div>
-          )}
         </div>
       </main>
 
