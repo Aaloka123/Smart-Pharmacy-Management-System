@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
+import { useNavigate } from "react-router-dom";
 
 interface InventoryItem {
   id: number;
@@ -13,6 +14,8 @@ interface InventoryItem {
 }
 
 const Inventory: React.FC = () => {
+  const navigate = useNavigate();
+
   const [inventory] = useState<InventoryItem[]>([
     {
       id: 1,
@@ -50,47 +53,54 @@ const Inventory: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-gray-100">
       <Header />
 
-      <main className="flex-grow p-6 space-y-8">
-        {/* Header */}
+      <main className="flex-grow p-8 space-y-8">
+        {/* Page Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-blue-700">Inventory</h1>
-            <p className="text-gray-600">Track stock and reorder levels</p>
+            <h1 className="text-3xl font-bold text-blue-700">
+              Inventory Management
+            </h1>
+            <p className="text-gray-600">
+              Monitor stock levels and supplier data
+            </p>
           </div>
 
-          <button className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 shadow">
+          <button
+            onClick={() => navigate("/add-medicine")}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 shadow-lg"
+          >
             + Add Stock
           </button>
         </div>
 
-        {/* Search */}
-        <div className="bg-white shadow rounded-lg p-4">
+        {/* Search Bar */}
+        <div className="bg-white shadow rounded-xl p-4">
           <input
             type="text"
             placeholder="Search medicine..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border rounded px-4 py-2 w-full md:w-1/3"
+            className="border rounded-lg px-4 py-2 w-full md:w-1/3 focus:ring-2 focus:ring-blue-400"
           />
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-          <Card title="Total Products" value={inventory.length} color="blue" />
-          <Card
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Kpi title="Total Products" value={inventory.length} color="blue" />
+          <Kpi
             title="Healthy Stock"
             value={inventory.filter((i) => i.stock > i.minStock).length}
             color="green"
           />
-          <Card
+          <Kpi
             title="Low Stock"
             value={inventory.filter((i) => i.stock <= i.minStock).length}
             color="red"
           />
-          <Card title="Suppliers" value={3} color="purple" />
+          <Kpi title="Suppliers" value={3} color="purple" />
         </div>
 
         {/* Table */}
@@ -99,12 +109,12 @@ const Inventory: React.FC = () => {
             <thead className="bg-blue-600 text-white">
               <tr>
                 <th className="px-4 py-3 text-left">Medicine</th>
-                <th className="px-4 py-3 text-left">Category</th>
-                <th className="px-4 py-3 text-left">Stock</th>
-                <th className="px-4 py-3 text-left">Progress</th>
-                <th className="px-4 py-3 text-left">Supplier</th>
-                <th className="px-4 py-3 text-left">Status</th>
-                <th className="px-4 py-3 text-left">Action</th>
+                <th className="px-4 py-3">Category</th>
+                <th className="px-4 py-3">Stock</th>
+                <th className="px-4 py-3">Progress</th>
+                <th className="px-4 py-3">Supplier</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Action</th>
               </tr>
             </thead>
 
@@ -120,33 +130,33 @@ const Inventory: React.FC = () => {
                     key={item.id}
                     className={`border-b ${
                       index % 2 === 0 ? "bg-blue-50" : "bg-white"
-                    } hover:bg-blue-100`}
+                    } hover:bg-blue-100 transition`}
                   >
                     <td className="px-4 py-3 font-semibold">{item.name}</td>
-                    <td className="px-4 py-3">{item.category}</td>
-                    <td className="px-4 py-3 font-bold">{item.stock}</td>
+                    <td className="px-4 py-3 text-center">{item.category}</td>
+                    <td className="px-4 py-3 text-center font-bold">
+                      {item.stock}
+                    </td>
 
-                    {/* Progress Bar */}
+                    {/* Progress */}
                     <td className="px-4 py-3">
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full ${
-                            percent > 100
-                              ? "bg-green-600"
-                              : percent > 70
-                                ? "bg-green-500"
-                                : percent > 40
-                                  ? "bg-yellow-500"
-                                  : "bg-red-500"
+                            percent > 70
+                              ? "bg-green-500"
+                              : percent > 40
+                                ? "bg-yellow-500"
+                                : "bg-red-500"
                           }`}
                           style={{ width: `${percent}%` }}
-                        ></div>
+                        />
                       </div>
                     </td>
 
-                    <td className="px-4 py-3">{item.supplier}</td>
+                    <td className="px-4 py-3 text-center">{item.supplier}</td>
 
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-center">
                       {item.stock > item.minStock ? (
                         <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-xs">
                           Healthy
@@ -158,7 +168,7 @@ const Inventory: React.FC = () => {
                       )}
                     </td>
 
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-center">
                       <button className="text-blue-700 hover:underline">
                         Update
                       </button>
@@ -182,8 +192,7 @@ const Inventory: React.FC = () => {
   );
 };
 
-/* Reusable KPI Card */
-const Card = ({
+const Kpi = ({
   title,
   value,
   color,
