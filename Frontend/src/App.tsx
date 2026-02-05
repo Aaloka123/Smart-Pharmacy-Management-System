@@ -4,6 +4,7 @@ import Home from "./UserPage/Home";
 import Medicines from "./UserPage/MedicinePage";
 import Login from "./UserPage/Loginpage";
 import AddMedicine from "./UserPage/AddMedicine";
+import Inventory from "./UserPage/Inventory";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
         <Route path="/medicines" element={<Medicines />} />
         <Route path="/login" element={<Login />} />
         <Route path="/add-medicine" element={<AddMedicine />} />
+        <Route path="/inventory" element={<Inventory />} />
       </Routes>
     </BrowserRouter>
   );
