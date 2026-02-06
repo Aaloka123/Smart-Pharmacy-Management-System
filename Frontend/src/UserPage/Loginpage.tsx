@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Mail, Lock, User, ShieldCheck } from "lucide-react";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -13,7 +14,6 @@ const Login: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Demo logic
     if (isLogin) {
       if (email === "admin@pharma.com" && password === "admin123") {
         navigate("/");
@@ -31,87 +31,100 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300">
-      <div className="bg-white shadow-2xl rounded-2xl w-full max-w-md p-8">
-        {/* Title */}
-        <h1 className="text-3xl font-bold text-center text-blue-700">
-          PharmaCare
-        </h1>
-        <p className="text-center text-gray-500 mb-6">
-          {isLogin ? "Login to your account" : "Create a new account"}
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
+      {/* Left Branding */}
+      <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-br from-blue-700 to-blue-500 text-white p-10">
+        <ShieldCheck size={80} />
+        <h1 className="text-4xl font-bold mt-4">PharmaCare</h1>
+        <p className="mt-2 text-center max-w-sm opacity-90">
+          Smart Pharmacy Management System for inventory, billing and analytics.
         </p>
+      </div>
 
-        {/* Tabs */}
-        <div className="flex mb-6">
-          <button
-            onClick={() => setIsLogin(true)}
-            className={`w-1/2 py-2 font-semibold rounded-l-lg ${
-              isLogin ? "bg-blue-600 text-white" : "bg-gray-100"
-            }`}
-          >
-            Login
-          </button>
-          <button
-            onClick={() => setIsLogin(false)}
-            className={`w-1/2 py-2 font-semibold rounded-r-lg ${
-              !isLogin ? "bg-blue-600 text-white" : "bg-gray-100"
-            }`}
-          >
-            Sign Up
-          </button>
-        </div>
+      {/* Right Form */}
+      <div className="flex items-center justify-center bg-gray-100">
+        <div className="bg-white shadow-xl rounded-2xl w-full max-w-md p-8">
+          <h2 className="text-2xl font-bold text-center mb-2">
+            {isLogin ? "Welcome Back 👋" : "Create Account"}
+          </h2>
+          <p className="text-center text-gray-500 mb-6">
+            {isLogin
+              ? "Login to manage your pharmacy"
+              : "Start managing your pharmacy today"}
+          </p>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
-            <div>
-              <label className="text-sm font-medium">Full Name</label>
+          {/* Tabs */}
+          <div className="flex mb-6 bg-gray-100 rounded-lg overflow-hidden">
+            <button
+              onClick={() => setIsLogin(true)}
+              className={`w-1/2 py-2 font-semibold ${
+                isLogin ? "bg-blue-600 text-white" : ""
+              }`}
+            >
+              Login
+            </button>
+            <button
+              onClick={() => setIsLogin(false)}
+              className={`w-1/2 py-2 font-semibold ${
+                !isLogin ? "bg-blue-600 text-white" : ""
+              }`}
+            >
+              Sign Up
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div className="relative">
+                <User className="absolute left-3 top-3 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full border pl-10 pr-4 py-2 rounded focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            )}
+
+            <div className="relative">
+              <Mail className="absolute left-3 top-3 text-gray-400" />
               <input
-                type="text"
-                placeholder="John Doe"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full border px-4 py-2 rounded focus:ring-2 focus:ring-blue-500"
+                type="email"
+                placeholder="admin@pharma.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full border pl-10 pr-4 py-2 rounded focus:ring-2 focus:ring-blue-500"
               />
             </div>
-          )}
 
-          <div>
-            <label className="text-sm font-medium">Email</label>
-            <input
-              type="email"
-              placeholder="admin@pharma.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border px-4 py-2 rounded focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 text-gray-400" />
+              <input
+                type="password"
+                placeholder="admin123"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border pl-10 pr-4 py-2 rounded focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
 
-          <div>
-            <label className="text-sm font-medium">Password</label>
-            <input
-              type="password"
-              placeholder="********"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border px-4 py-2 rounded focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+            {error && (
+              <p className="text-red-600 text-sm text-center">{error}</p>
+            )}
 
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-semibold"
+            >
+              {isLogin ? "Login" : "Create Account"}
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-semibold"
-          >
-            {isLogin ? "Login" : "Create Account"}
-          </button>
-        </form>
-
-        {/* Footer */}
-        <p className="text-xs text-gray-400 text-center mt-6">
-          © {new Date().getFullYear()} PharmaCare Management System
-        </p>
+          <p className="text-xs text-gray-400 text-center mt-6">
+            © {new Date().getFullYear()} PharmaCare System
+          </p>
+        </div>
       </div>
     </div>
   );
