@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
 import { useNavigate } from "react-router-dom";
+import { Pill, Tag, DollarSign, Boxes, Calendar, Truck } from "lucide-react";
 
 const AddMedicine: React.FC = () => {
   const navigate = useNavigate();
@@ -26,104 +27,122 @@ const AddMedicine: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-gray-100">
+    <div className="min-h-screen flex flex-col bg-gray-100">
       <Header />
 
-      <main className="flex-grow flex justify-center items-center p-8">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl p-8">
-          {/* Title */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-blue-700">
+      <main className="flex-grow p-6 max-w-5xl mx-auto w-full">
+        {/* Page Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold flex items-center gap-2">
+              <Pill className="text-blue-600" />
               Add New Medicine
             </h1>
             <p className="text-gray-500">
-              Enter medicine information carefully
+              Register new medicine into inventory system.
             </p>
           </div>
+        </div>
 
-          {/* Form */}
-          <form
-            onSubmit={handleSubmit}
-            className="grid grid-cols-1 md:grid-cols-2 gap-5"
-          >
+        {/* Form Card */}
+        <div className="bg-white shadow-sm rounded-xl p-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Basic Info */}
             <div>
-              <label className="text-sm text-gray-600">Medicine Name</label>
-              <input
-                name="name"
-                placeholder="Paracetamol"
-                onChange={handleChange}
-                className="border w-full px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-400"
-                required
-              />
+              <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="relative">
+                  <Pill className="absolute left-3 top-3 text-gray-400" />
+                  <input
+                    name="name"
+                    placeholder="Medicine Name"
+                    onChange={handleChange}
+                    className="border w-full pl-10 pr-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                <div className="relative">
+                  <Tag className="absolute left-3 top-3 text-gray-400" />
+                  <select
+                    name="category"
+                    onChange={handleChange}
+                    className="border w-full pl-10 pr-4 py-2 rounded-lg"
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    <option>Tablet</option>
+                    <option>Capsule</option>
+                    <option>Syrup</option>
+                    <option>Injection</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
+            {/* Stock & Pricing */}
             <div>
-              <label className="text-sm text-gray-600">Category</label>
-              <select
-                name="category"
-                onChange={handleChange}
-                className="border w-full px-4 py-2 rounded-lg"
-                required
-              >
-                <option value="">Select</option>
-                <option>Tablet</option>
-                <option>Capsule</option>
-                <option>Syrup</option>
-                <option>Injection</option>
-              </select>
+              <h2 className="text-lg font-semibold mb-4">Stock & Pricing</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-3 text-gray-400" />
+                  <input
+                    name="price"
+                    type="number"
+                    placeholder="Price (Rs)"
+                    onChange={handleChange}
+                    className="border w-full pl-10 pr-4 py-2 rounded-lg"
+                    required
+                  />
+                </div>
+
+                <div className="relative">
+                  <Boxes className="absolute left-3 top-3 text-gray-400" />
+                  <input
+                    name="stock"
+                    type="number"
+                    placeholder="Stock Quantity"
+                    onChange={handleChange}
+                    className="border w-full pl-10 pr-4 py-2 rounded-lg"
+                    required
+                  />
+                </div>
+              </div>
             </div>
 
+            {/* Supplier & Expiry */}
             <div>
-              <label className="text-sm text-gray-600">Price (Rs)</label>
-              <input
-                name="price"
-                type="number"
-                placeholder="50"
-                onChange={handleChange}
-                className="border w-full px-4 py-2 rounded-lg"
-                required
-              />
+              <h2 className="text-lg font-semibold mb-4">Supplier Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-3 text-gray-400" />
+                  <input
+                    name="expiry"
+                    type="date"
+                    onChange={handleChange}
+                    className="border w-full pl-10 pr-4 py-2 rounded-lg"
+                    required
+                  />
+                </div>
+
+                <div className="relative">
+                  <Truck className="absolute left-3 top-3 text-gray-400" />
+                  <input
+                    name="supplier"
+                    placeholder="Supplier Name"
+                    onChange={handleChange}
+                    className="border w-full pl-10 pr-4 py-2 rounded-lg"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label className="text-sm text-gray-600">Stock Quantity</label>
-              <input
-                name="stock"
-                type="number"
-                placeholder="100"
-                onChange={handleChange}
-                className="border w-full px-4 py-2 rounded-lg"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-600">Expiry Date</label>
-              <input
-                name="expiry"
-                type="date"
-                onChange={handleChange}
-                className="border w-full px-4 py-2 rounded-lg"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-600">Supplier</label>
-              <input
-                name="supplier"
-                placeholder="ABC Pharma Pvt Ltd"
-                onChange={handleChange}
-                className="border w-full px-4 py-2 rounded-lg"
-              />
-            </div>
-
-            {/* Buttons */}
-            <div className="col-span-2 flex justify-end gap-4 mt-6">
+            {/* Action Bar */}
+            <div className="flex justify-end gap-4 pt-6 border-t">
               <button
                 type="button"
                 onClick={() => navigate("/medicines")}
-                className="px-6 py-2 rounded-lg border text-gray-600 hover:bg-gray-100"
+                className="px-6 py-2 rounded-lg border hover:bg-gray-50"
               >
                 Cancel
               </button>
