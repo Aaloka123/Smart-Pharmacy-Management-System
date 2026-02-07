@@ -6,6 +6,7 @@ import Login from "./UserPage/Loginpage";
 import AddMedicine from "./UserPage/AddMedicine";
 import Inventory from "./UserPage/Inventory";
 import Reports from "./UserPage/Reports";
+import Sales from "./UserPage/Sales";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/add-medicine" element={<AddMedicine />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/sales" element={<Sales />} />
       </Routes>
     </BrowserRouter>
   );
