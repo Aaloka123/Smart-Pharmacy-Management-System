@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Trash2, Plus, Minus, Search } from "lucide-react";
+import { Trash2, Plus, Minus, Search, ShoppingCart, Check } from "lucide-react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
 
@@ -16,13 +16,14 @@ const mockMedicines: Medicine[] = [
   { id: 2, name: "Amoxicillin", price: 50, stock: 60, category: "Antibiotic" },
   { id: 3, name: "Vitamin C", price: 30, stock: 90, category: "Supplement" },
   { id: 4, name: "Ibuprofen", price: 40, stock: 45, category: "Pain" },
-  { id: 5, name: "Cough Syrup", price: 70, stock: 25, category: "Cold" },
+  { id: 5, name: "Cough Syrup", price: 70, stock: 0, category: "Cold" },
 ];
 
 const Sales: React.FC = () => {
   const [cart, setCart] = useState<(Medicine & { qty: number })[]>([]);
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const [addedId, setAddedId] = useState<number | null>(null);
 
   const categories = ["All", "Pain", "Antibiotic", "Supplement", "Cold"];
 
@@ -33,6 +34,8 @@ const Sales: React.FC = () => {
   );
 
   const addToCart = (med: Medicine) => {
+    if (med.stock === 0) return;
+
     setCart((prev) => {
       const found = prev.find((i) => i.id === med.id);
       if (found) {
@@ -42,6 +45,9 @@ const Sales: React.FC = () => {
       }
       return [...prev, { ...med, qty: 1 }];
     });
+
+    setAddedId(med.id);
+    setTimeout(() => setAddedId(null), 800);
   };
 
   const updateQty = (id: number, delta: number) => {
@@ -78,10 +84,10 @@ const Sales: React.FC = () => {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-1 rounded-full text-sm border transition ${
+                className={`px-4 py-1 rounded-full text-sm border transition-all duration-300 ${
                   activeCategory === cat
-                    ? "bg-blue-600 text-white"
-                    : "bg-white hover:bg-gray-100"
+                    ? "bg-blue-600 text-white shadow"
+                    : "bg-white hover:bg-gray-100 hover:scale-105"
                 }`}
               >
                 {cat}
@@ -94,8 +100,15 @@ const Sales: React.FC = () => {
             {filtered.map((med) => (
               <div
                 key={med.id}
-                className="bg-white rounded-2xl shadow hover:shadow-xl hover:-translate-y-1 transition p-5 flex flex-col justify-between"
+                className="bg-white rounded-2xl shadow hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-300 p-5 flex flex-col justify-between relative"
               >
+                {/* Stock Badge */}
+                {med.stock === 0 && (
+                  <span className="absolute top-3 right-3 text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">
+                    Out of Stock
+                  </span>
+                )}
+
                 <div>
                   <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
                     {med.category}
@@ -114,10 +127,25 @@ const Sales: React.FC = () => {
                   </span>
 
                   <button
+                    disabled={med.stock === 0}
                     onClick={() => addToCart(med)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+                      med.stock === 0
+                        ? "bg-gray-300 cursor-not-allowed"
+                        : addedId === med.id
+                          ? "bg-green-600 text-white"
+                          : "bg-blue-600 text-white hover:bg-blue-700 hover:scale-105"
+                    }`}
                   >
-                    Add
+                    {addedId === med.id ? (
+                      <>
+                        <Check size={16} /> Added
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart size={16} /> Add
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -136,7 +164,7 @@ const Sales: React.FC = () => {
               {cart.map((item) => (
                 <div
                   key={item.id}
-                  className="flex justify-between items-center"
+                  className="flex justify-between items-center hover:bg-gray-50 p-2 rounded transition"
                 >
                   <div>
                     <p className="font-medium">{item.name}</p>
@@ -146,23 +174,23 @@ const Sales: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => updateQty(item.id, -1)}
-                      className="p-1 bg-gray-200 rounded"
+                      className="p-1 bg-gray-200 rounded hover:bg-gray-300 transition hover:scale-110"
                     >
                       <Minus size={14} />
                     </button>
 
-                    <span>{item.qty}</span>
+                    <span className="font-semibold">{item.qty}</span>
 
                     <button
                       onClick={() => updateQty(item.id, 1)}
-                      className="p-1 bg-gray-200 rounded"
+                      className="p-1 bg-gray-200 rounded hover:bg-gray-300 transition hover:scale-110"
                     >
                       <Plus size={14} />
                     </button>
 
                     <button
                       onClick={() => updateQty(item.id, -item.qty)}
-                      className="text-red-500"
+                      className="text-red-500 hover:scale-125 transition"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -176,10 +204,10 @@ const Sales: React.FC = () => {
           <div className="border-t mt-4 pt-4">
             <div className="flex justify-between font-semibold mb-3">
               <span>Total</span>
-              <span>Rs {total}</span>
+              <span className="text-green-600">Rs {total}</span>
             </div>
 
-            <button className="w-full bg-green-600 text-white py-3 rounded-xl hover:bg-green-700">
+            <button className="w-full bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 hover:scale-105 transition-all">
               Complete Sale
             </button>
           </div>
