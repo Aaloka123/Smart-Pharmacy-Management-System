@@ -102,7 +102,7 @@ const Reports: React.FC = () => {
               <tr>
                 <th className="border p-3 text-left">Date</th>
                 <th className="border p-3 text-left">Medicine</th>
-                <th className="border p-3 text-center">Qty</th>
+                <th className="border p-3 text-center">Quantity</th>
                 <th className="border p-3 text-right">Amount</th>
                 <th className="border p-3 text-center">Status</th>
               </tr>
