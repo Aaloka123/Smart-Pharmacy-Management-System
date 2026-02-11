@@ -141,7 +141,7 @@ const Reports: React.FC = () => {
           </div>
           <div className="bg-white shadow-sm rounded-xl p-5">
             <h3 className="font-semibold mb-2">Stock Health</h3>
-            <p className="text-green-600">Good</p>
+            <p className="text-green-600">goood</p>
           </div>
         </div>
       </main>
