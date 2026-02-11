@@ -38,7 +38,8 @@ const Footer: React.FC = () => {
 
       {/* Bottom Bar */}
       <div className="border-t border-blue-600 text-center text-sm py-3 text-blue-100">
-        © {new Date().getFullYear()} PharmaCare | Developed by Aaloka Poudel
+        © {new Date().getFullYear()} PharmaCare | Developed by Aaloka Poudel |
+        All rights reserved.
       </div>
     </footer>
   );
