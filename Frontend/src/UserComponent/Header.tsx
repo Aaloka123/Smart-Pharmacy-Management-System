@@ -21,7 +21,7 @@ const Header: React.FC = () => {
         {/* Navigation */}
         <nav className="hidden md:flex gap-6 text-sm">
           <Link to="/" className={navLinkClass("/")}>
-            Header
+            Home
           </Link>
           <Link to="/medicines" className={navLinkClass("/medicines")}>
             Medicines
