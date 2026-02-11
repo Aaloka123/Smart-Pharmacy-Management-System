@@ -61,7 +61,7 @@ const Reports: React.FC = () => {
             <input type="date" className="border rounded px-2 py-1" />
           </div>
           <button className="bg-gray-800 text-white px-4 py-1 rounded hover:bg-black">
-            applyy
+            apply
           </button>
         </div>
 
