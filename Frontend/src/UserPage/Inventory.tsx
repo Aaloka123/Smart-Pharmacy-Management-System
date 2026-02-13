@@ -2,6 +2,13 @@ import React, { useState } from "react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
 import { useNavigate } from "react-router-dom";
+import {
+  Package,
+  AlertTriangle,
+  Truck,
+  CheckCircle,
+  Search,
+} from "lucide-react";
 
 interface InventoryItem {
   id: number;
@@ -52,66 +59,75 @@ const Inventory: React.FC = () => {
     item.name.toLowerCase().includes(search.toLowerCase()),
   );
 
+  const healthy = inventory.filter((i) => i.stock > i.minStock).length;
+  const low = inventory.length - healthy;
+
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-gray-100">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-100 to-slate-200">
       <Header />
 
-      <main className="flex-grow p-8 space-y-8">
-        {/* Page Header */}
-        <div className="flex justify-between items-center">
+      <main className="flex-grow max-w-7xl mx-auto p-6 space-y-6">
+        {/* Hero */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white shadow-xl flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-blue-700">
-              Inventory Management
+            <h1 className="text-3xl font-bold flex items-center gap-2">
+              <Package /> Inventory Management
             </h1>
-            <p className="text-gray-600">
-              Monitor stock levels and supplier data
-            </p>
+            <p className="opacity-90">Real-time stock & supplier tracking</p>
           </div>
 
           <button
             onClick={() => navigate("/add-medicine")}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 shadow-lg"
+            className="bg-white text-blue-600 px-6 py-2 rounded-xl font-semibold hover:bg-gray-100"
           >
             + Add Stock
           </button>
         </div>
 
-        {/* Search Bar */}
-        <div className="bg-white shadow rounded-xl p-4">
+        {/* KPIs */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Kpi
+            title="Total Products"
+            value={inventory.length}
+            icon={<Package />}
+            color="blue"
+          />
+          <Kpi
+            title="Healthy Stock"
+            value={healthy}
+            icon={<CheckCircle />}
+            color="green"
+          />
+          <Kpi
+            title="Low Stock"
+            value={low}
+            icon={<AlertTriangle />}
+            color="red"
+          />
+          <Kpi title="Suppliers" value={3} icon={<Truck />} color="purple" />
+        </div>
+
+        {/* Search */}
+        <div className="bg-white/80 backdrop-blur shadow rounded-xl p-4 flex items-center gap-3">
+          <Search size={18} className="text-blue-500" />
           <input
             type="text"
             placeholder="Search medicine..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border rounded-lg px-4 py-2 w-full md:w-1/3 focus:ring-2 focus:ring-blue-400"
+            className="outline-none w-full bg-transparent"
           />
-        </div>
-
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Kpi title="Total Products" value={inventory.length} color="blue" />
-          <Kpi
-            title="Healthy Stock"
-            value={inventory.filter((i) => i.stock > i.minStock).length}
-            color="green"
-          />
-          <Kpi
-            title="Low Stock"
-            value={inventory.filter((i) => i.stock <= i.minStock).length}
-            color="red"
-          />
-          <Kpi title="Suppliers" value={3} color="purple" />
         </div>
 
         {/* Table */}
         <div className="bg-white shadow-2xl rounded-2xl overflow-hidden border">
           <table className="min-w-full text-sm">
-            <thead className="bg-blue-600 text-white">
+            <thead className="bg-blue-600 text-white sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left">Medicine</th>
                 <th className="px-4 py-3">Category</th>
                 <th className="px-4 py-3">Stock</th>
-                <th className="px-4 py-3">Progress</th>
+                <th className="px-4 py-3">Level</th>
                 <th className="px-4 py-3">Supplier</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Action</th>
@@ -129,8 +145,8 @@ const Inventory: React.FC = () => {
                   <tr
                     key={item.id}
                     className={`border-b ${
-                      index % 2 === 0 ? "bg-blue-50" : "bg-white"
-                    } hover:bg-blue-100 transition`}
+                      index % 2 === 0 ? "bg-slate-50" : "bg-white"
+                    } hover:bg-blue-50 transition`}
                   >
                     <td className="px-4 py-3 font-semibold">{item.name}</td>
                     <td className="px-4 py-3 text-center">{item.category}</td>
@@ -142,7 +158,7 @@ const Inventory: React.FC = () => {
                     <td className="px-4 py-3">
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
-                          className={`h-2 rounded-full ${
+                          className={`h-2 rounded-full transition-all ${
                             percent > 70
                               ? "bg-green-500"
                               : percent > 40
@@ -152,24 +168,25 @@ const Inventory: React.FC = () => {
                           style={{ width: `${percent}%` }}
                         />
                       </div>
+                      <p className="text-xs text-gray-500 mt-1">{percent}%</p>
                     </td>
 
                     <td className="px-4 py-3 text-center">{item.supplier}</td>
 
                     <td className="px-4 py-3 text-center">
                       {item.stock > item.minStock ? (
-                        <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-xs">
-                          Healthy
+                        <span className="flex items-center justify-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs">
+                          <CheckCircle size={12} /> Healthy
                         </span>
                       ) : (
-                        <span className="bg-red-200 text-red-800 px-3 py-1 rounded-full text-xs">
-                          Reorder
+                        <span className="flex items-center justify-center gap-1 bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs">
+                          <AlertTriangle size={12} /> Reorder
                         </span>
                       )}
                     </td>
 
                     <td className="px-4 py-3 text-center">
-                      <button className="text-blue-700 hover:underline">
+                      <button className="text-blue-600 font-medium hover:underline">
                         Update
                       </button>
                     </td>
@@ -195,17 +212,26 @@ const Inventory: React.FC = () => {
 const Kpi = ({
   title,
   value,
+  icon,
   color,
 }: {
   title: string;
   value: number;
+  icon: React.ReactNode;
   color: string;
 }) => (
   <div
     className={`bg-white shadow rounded-xl p-5 border-l-4 border-${color}-600`}
   >
-    <p className="text-gray-500">{title}</p>
-    <h2 className="text-2xl font-bold">{value}</h2>
+    <div className="flex justify-between items-center">
+      <div>
+        <p className="text-gray-500">{title}</p>
+        <h2 className="text-2xl font-bold">{value}</h2>
+      </div>
+      <div className={`text-${color}-600 bg-${color}-100 p-2 rounded-full`}>
+        {icon}
+      </div>
+    </div>
   </div>
 );
 
