@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import { Shield } from "lucide-react";
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -19,7 +20,7 @@ const Header: React.FC = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="hidden md:flex gap-6 text-sm">
+        <nav className="hidden md:flex gap-6 text-sm items-center">
           <Link to="/" className={navLinkClass("/")}>
             Home
           </Link>
@@ -36,10 +37,19 @@ const Header: React.FC = () => {
             Reports
           </Link>
 
+          {/* ADMIN BUTTON */}
+          <Link
+            to="/admin"
+            className="flex items-center gap-2 ml-2 bg-gray-900 px-4 py-1.5 rounded-lg hover:bg-gray-800 transition"
+          >
+            <Shield size={14} />
+            Admin
+          </Link>
+
           {/* LOGIN BUTTON */}
           <Link
             to="/login"
-            className="ml-4 bg-white text-blue-700 px-4 py-1 rounded font-semibold hover:bg-blue-100"
+            className="ml-2 bg-white text-blue-700 px-4 py-1.5 rounded font-semibold hover:bg-blue-100"
           >
             Login
           </Link>
