@@ -184,7 +184,7 @@ const QuickStat = ({ label, value, icon, color }: any) => (
       <p className="text-sm font-medium">{label}</p>
       <h2 className="text-2xl font-bold">{value}</h2>
     </div>
-    <div className="text-3xl opacity-70 hover:rotate-[15deg] hover:shadow-lg transition-all">
+    <div className="text-3xl opacity-70 hover:rotate-[15deg] transition-all">
       {icon}
     </div>
   </div>
@@ -197,7 +197,9 @@ const AdminCard = ({ title, value, icon, gradient, trend }: any) => (
     />
     <p className="text-gray-500 text-sm">{title}</p>
     <h2 className="text-3xl font-bold mt-1">{value}</h2>
-    {trend && <p className="text-xs text-gray-400 mt-1">{trend}</p>}
+    {trend && (
+      <p className="text-xs text-gray-400 mt-1 animate-bounce">{trend}</p>
+    )}
     <div
       className={`mt-4 w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-to-r ${gradient} transform transition-all hover:rotate-12 hover:scale-110`}
     >
@@ -212,7 +214,7 @@ const AdminAction = ({ title, desc, link, icon, color }: any) => (
     className={`rounded-2xl p-6 text-white ${color} flex justify-between items-center transform transition-all duration-500 hover:scale-[1.05] hover:shadow-3xl hover:-translate-y-1 hover:rotate-[1deg]`}
   >
     <div>
-      <h3 className="text-lg font-semibold">{title}</h3>
+      <h3 className="text-lg font-semibold hover:underline">{title}</h3>
       <p className="text-sm opacity-90 mt-1">{desc}</p>
     </div>
     <div className="text-3xl opacity-80 hover:rotate-12 transition-all">
@@ -223,10 +225,10 @@ const AdminAction = ({ title, desc, link, icon, color }: any) => (
 
 const HealthItem = ({ icon, label, status, color }: any) => {
   const colorMap: any = {
-    green: "bg-green-100 text-green-700",
-    blue: "bg-blue-100 text-blue-700",
-    red: "bg-red-100 text-red-700",
-    yellow: "bg-yellow-100 text-yellow-700",
+    green: "bg-green-100 text-green-700 rounded-full px-2",
+    blue: "bg-blue-100 text-blue-700 rounded-full px-2",
+    red: "bg-red-100 text-red-700 rounded-full px-2",
+    yellow: "bg-yellow-100 text-yellow-700 rounded-full px-2",
   };
 
   return (
@@ -237,9 +239,7 @@ const HealthItem = ({ icon, label, status, color }: any) => {
         </div>
         <p className="font-medium">{label}</p>
       </div>
-      <span
-        className={`px-3 py-1 rounded-full text-xs font-semibold ${colorMap[color]}`}
-      >
+      <span className={`px-3 py-1 text-xs font-semibold ${colorMap[color]}`}>
         {status}
       </span>
     </div>
