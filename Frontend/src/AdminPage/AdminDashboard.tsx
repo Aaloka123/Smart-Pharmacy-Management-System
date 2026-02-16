@@ -28,7 +28,7 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           <h1 className="text-4xl font-bold flex items-center gap-3">
-            <ShieldCheck className="text-green-400 animate-pulse" />
+            <ShieldCheck className="text-green-400 animate-pulse hover:scale-110 transition-all duration-500" />
             Admin Control Panel
           </h1>
           <p className="opacity-80 mt-2">
