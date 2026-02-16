@@ -28,7 +28,7 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           <h1 className="text-4xl font-bold flex items-center gap-3">
-            <ShieldCheck className="text-green-400 animate-pulse hover:scale-110 transition-all duration-500" />
+            <ShieldCheck className="text-green-400 animate-pulse" />
             Admin Control Panel
           </h1>
           <p className="opacity-80 mt-2">
@@ -184,7 +184,7 @@ const QuickStat = ({ label, value, icon, color }: any) => (
       <p className="text-sm font-medium">{label}</p>
       <h2 className="text-2xl font-bold">{value}</h2>
     </div>
-    <div className="text-3xl opacity-70 hover:rotate-[15deg] transition-all">
+    <div className="text-3xl opacity-70 hover:rotate-[15deg] hover:shadow-lg transition-all">
       {icon}
     </div>
   </div>
