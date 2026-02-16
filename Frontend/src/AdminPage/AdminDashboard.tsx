@@ -10,6 +10,8 @@ import {
   Database,
   Server,
   Cloud,
+  AlertCircle,
+  CheckCircle,
 } from "lucide-react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
@@ -33,6 +35,28 @@ const AdminDashboard: React.FC = () => {
           <p className="opacity-80 mt-2">
             System-level management & monitoring dashboard
           </p>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <QuickStat
+            label="Pending Approvals"
+            value="5"
+            icon={<AlertCircle />}
+            color="bg-yellow-100 text-yellow-700"
+          />
+          <QuickStat
+            label="Active Staff"
+            value="12"
+            icon={<Users />}
+            color="bg-blue-100 text-blue-700"
+          />
+          <QuickStat
+            label="System Alerts"
+            value="3"
+            icon={<AlertCircle />}
+            color="bg-red-100 text-red-700"
+          />
         </div>
 
         {/* KPIs */}
@@ -72,7 +96,6 @@ const AdminDashboard: React.FC = () => {
           <h2 className="text-2xl font-semibold mb-4">
             Administrative Actions
           </h2>
-
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <AdminAction
               title="Manage Users"
@@ -101,7 +124,6 @@ const AdminDashboard: React.FC = () => {
         {/* System Health */}
         <div className="bg-white rounded-3xl shadow-xl p-6">
           <h2 className="text-xl font-semibold mb-4">System Health</h2>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <HealthItem
               icon={<Database />}
@@ -123,6 +145,29 @@ const AdminDashboard: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* Recent Activity */}
+        <div className="bg-white rounded-3xl shadow-xl p-6">
+          <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+          <ul className="space-y-4">
+            <ActivityItem
+              text="Paracetamol sold (10 units)"
+              time="2 mins ago"
+              color="green"
+            />
+            <ActivityItem
+              text="Stock low for Amoxicillin"
+              time="1 hour ago"
+              color="yellow"
+            />
+            <ActivityItem
+              text="New user added: Niki Bhasima"
+              time="Today"
+              color="blue"
+            />
+            <ActivityItem text="2 items expired" time="Today" color="red" />
+          </ul>
+        </div>
       </main>
 
       <Footer />
@@ -132,16 +177,26 @@ const AdminDashboard: React.FC = () => {
 
 /* ---------- Components ---------- */
 
+const QuickStat = ({ label, value, icon, color }: any) => (
+  <div
+    className={`flex items-center justify-between rounded-2xl p-4 shadow bg-white ${color}`}
+  >
+    <div>
+      <p className="text-sm font-medium">{label}</p>
+      <h2 className="text-2xl font-bold">{value}</h2>
+    </div>
+    <div className="text-3xl opacity-70">{icon}</div>
+  </div>
+);
+
 const AdminCard = ({ title, value, icon, gradient, trend }: any) => (
   <div className="relative bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
     <div
       className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradient} opacity-20 rounded-bl-full`}
     />
-
     <p className="text-gray-500 text-sm">{title}</p>
     <h2 className="text-3xl font-bold mt-1">{value}</h2>
     {trend && <p className="text-xs text-gray-400 mt-1">{trend}</p>}
-
     <div
       className={`mt-4 w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-to-r ${gradient}`}
     >
@@ -168,6 +223,7 @@ const HealthItem = ({ icon, label, status, color }: any) => {
     green: "bg-green-100 text-green-700",
     blue: "bg-blue-100 text-blue-700",
     red: "bg-red-100 text-red-700",
+    yellow: "bg-yellow-100 text-yellow-700",
   };
 
   return (
@@ -176,13 +232,30 @@ const HealthItem = ({ icon, label, status, color }: any) => {
         <div className="p-2 bg-gray-100 rounded-lg">{icon}</div>
         <p className="font-medium">{label}</p>
       </div>
-
       <span
         className={`px-3 py-1 rounded-full text-xs font-semibold ${colorMap[color]}`}
       >
         {status}
       </span>
     </div>
+  );
+};
+
+const ActivityItem = ({ text, time, color }: any) => {
+  const colorMap: any = {
+    green: "bg-green-500",
+    blue: "bg-blue-500",
+    red: "bg-red-500",
+    yellow: "bg-yellow-500",
+  };
+  return (
+    <li className="flex justify-between items-center">
+      <div className="flex items-center gap-3">
+        <span className={`w-3 h-3 rounded-full ${colorMap[color]}`} />
+        <p className="text-sm">{text}</p>
+      </div>
+      <span className="text-xs text-gray-400">{time}</span>
+    </li>
   );
 };
 
