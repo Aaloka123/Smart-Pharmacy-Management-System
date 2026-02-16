@@ -11,7 +11,6 @@ import {
   Server,
   Cloud,
   AlertCircle,
-  CheckCircle,
 } from "lucide-react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
@@ -23,13 +22,13 @@ const AdminDashboard: React.FC = () => {
 
       <main className="flex-grow max-w-7xl mx-auto p-6 space-y-10">
         {/* Hero */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-gray-900 to-gray-700 rounded-3xl p-10 text-white shadow-2xl">
+        <div className="relative overflow-hidden bg-gradient-to-r from-gray-900 to-gray-700 rounded-3xl p-10 text-white shadow-2xl transform transition-all duration-500 hover:scale-[1.02] hover:shadow-3xl">
           <div className="absolute right-10 top-10 opacity-10 text-[120px]">
             <ShieldCheck />
           </div>
 
           <h1 className="text-4xl font-bold flex items-center gap-3">
-            <ShieldCheck className="text-green-400" />
+            <ShieldCheck className="text-green-400 animate-pulse" />
             Admin Control Panel
           </h1>
           <p className="opacity-80 mt-2">
@@ -179,18 +178,20 @@ const AdminDashboard: React.FC = () => {
 
 const QuickStat = ({ label, value, icon, color }: any) => (
   <div
-    className={`flex items-center justify-between rounded-2xl p-4 shadow bg-white ${color}`}
+    className={`flex items-center justify-between rounded-2xl p-4 shadow bg-white ${color} transform transition-all hover:scale-105 hover:shadow-2xl hover:rotate-[1deg]`}
   >
     <div>
       <p className="text-sm font-medium">{label}</p>
       <h2 className="text-2xl font-bold">{value}</h2>
     </div>
-    <div className="text-3xl opacity-70">{icon}</div>
+    <div className="text-3xl opacity-70 hover:rotate-[15deg] transition-all">
+      {icon}
+    </div>
   </div>
 );
 
 const AdminCard = ({ title, value, icon, gradient, trend }: any) => (
-  <div className="relative bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+  <div className="relative bg-white rounded-3xl p-6 shadow-lg overflow-hidden transform transition-all duration-500 hover:scale-[1.05] hover:shadow-3xl hover:-translate-y-1">
     <div
       className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradient} opacity-20 rounded-bl-full`}
     />
@@ -198,7 +199,7 @@ const AdminCard = ({ title, value, icon, gradient, trend }: any) => (
     <h2 className="text-3xl font-bold mt-1">{value}</h2>
     {trend && <p className="text-xs text-gray-400 mt-1">{trend}</p>}
     <div
-      className={`mt-4 w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-to-r ${gradient}`}
+      className={`mt-4 w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-to-r ${gradient} transform transition-all hover:rotate-12 hover:scale-110`}
     >
       {icon}
     </div>
@@ -208,13 +209,15 @@ const AdminCard = ({ title, value, icon, gradient, trend }: any) => (
 const AdminAction = ({ title, desc, link, icon, color }: any) => (
   <Link
     to={link}
-    className={`rounded-2xl p-6 text-white ${color} hover:scale-[1.03] hover:shadow-2xl transition-all flex justify-between items-center`}
+    className={`rounded-2xl p-6 text-white ${color} flex justify-between items-center transform transition-all duration-500 hover:scale-[1.05] hover:shadow-3xl hover:-translate-y-1 hover:rotate-[1deg]`}
   >
     <div>
       <h3 className="text-lg font-semibold">{title}</h3>
       <p className="text-sm opacity-90 mt-1">{desc}</p>
     </div>
-    <div className="text-3xl opacity-80">{icon}</div>
+    <div className="text-3xl opacity-80 hover:rotate-12 transition-all">
+      {icon}
+    </div>
   </Link>
 );
 
@@ -227,9 +230,11 @@ const HealthItem = ({ icon, label, status, color }: any) => {
   };
 
   return (
-    <div className="border rounded-2xl p-5 flex justify-between items-center hover:shadow transition">
+    <div className="border rounded-2xl p-5 flex justify-between items-center hover:shadow-lg hover:scale-[1.02] transition">
       <div className="flex items-center gap-3">
-        <div className="p-2 bg-gray-100 rounded-lg">{icon}</div>
+        <div className="p-2 bg-gray-100 rounded-lg hover:scale-110 transition-all">
+          {icon}
+        </div>
         <p className="font-medium">{label}</p>
       </div>
       <span
@@ -249,7 +254,7 @@ const ActivityItem = ({ text, time, color }: any) => {
     yellow: "bg-yellow-500",
   };
   return (
-    <li className="flex justify-between items-center">
+    <li className="flex justify-between items-center transform transition-all hover:scale-[1.02] hover:bg-gray-50 rounded-lg p-2">
       <div className="flex items-center gap-3">
         <span className={`w-3 h-3 rounded-full ${colorMap[color]}`} />
         <p className="text-sm">{text}</p>
