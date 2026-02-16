@@ -42,28 +42,32 @@ const AdminDashboard: React.FC = () => {
             value="52"
             icon={<Users />}
             gradient="from-blue-500 to-blue-700"
+            trend="↑ 5% since last week"
           />
           <AdminCard
             title="Medicines"
             value="245"
             icon={<Package />}
             gradient="from-green-500 to-green-700"
+            trend="↑ 2 new today"
           />
           <AdminCard
             title="Daily Sales"
             value="Rs 12,450"
             icon={<BarChart3 />}
             gradient="from-purple-500 to-purple-700"
+            trend="↑ 8% since yesterday"
           />
           <AdminCard
             title="System Logs"
             value="128"
             icon={<Activity />}
             gradient="from-red-500 to-red-700"
+            trend="5 new alerts"
           />
         </div>
 
-        {/* Actions */}
+        {/* Admin Actions */}
         <div>
           <h2 className="text-2xl font-semibold mb-4">
             Administrative Actions
@@ -128,7 +132,7 @@ const AdminDashboard: React.FC = () => {
 
 /* ---------- Components ---------- */
 
-const AdminCard = ({ title, value, icon, gradient }: any) => (
+const AdminCard = ({ title, value, icon, gradient, trend }: any) => (
   <div className="relative bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
     <div
       className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradient} opacity-20 rounded-bl-full`}
@@ -136,6 +140,7 @@ const AdminCard = ({ title, value, icon, gradient }: any) => (
 
     <p className="text-gray-500 text-sm">{title}</p>
     <h2 className="text-3xl font-bold mt-1">{value}</h2>
+    {trend && <p className="text-xs text-gray-400 mt-1">{trend}</p>}
 
     <div
       className={`mt-4 w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-to-r ${gradient}`}
