@@ -7,88 +7,116 @@ import {
   Settings,
   ShieldCheck,
   Activity,
+  Database,
+  Server,
+  Cloud,
 } from "lucide-react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
 
 const AdminDashboard: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-100 to-gray-200">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-100 via-gray-100 to-slate-200">
       <Header />
 
-      <main className="flex-grow max-w-7xl mx-auto p-6 space-y-8">
-        {/* Admin Hero */}
-        <div className="bg-gradient-to-r from-gray-900 to-gray-700 rounded-2xl p-8 text-white shadow-xl">
-          <h1 className="text-4xl font-bold flex items-center gap-2">
-            <ShieldCheck /> Admin Control Panel
+      <main className="flex-grow max-w-7xl mx-auto p-6 space-y-10">
+        {/* Hero */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-gray-900 to-gray-700 rounded-3xl p-10 text-white shadow-2xl">
+          <div className="absolute right-10 top-10 opacity-10 text-[120px]">
+            <ShieldCheck />
+          </div>
+
+          <h1 className="text-4xl font-bold flex items-center gap-3">
+            <ShieldCheck className="text-green-400" />
+            Admin Control Panel
           </h1>
-          <p className="opacity-80 mt-1">
-            System-level management & monitoring
+          <p className="opacity-80 mt-2">
+            System-level management & monitoring dashboard
           </p>
         </div>
 
-        {/* Admin KPIs */}
+        {/* KPIs */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <AdminCard
             title="Total Users"
             value="52"
             icon={<Users />}
-            color="bg-blue-600"
+            gradient="from-blue-500 to-blue-700"
           />
           <AdminCard
             title="Medicines"
             value="245"
             icon={<Package />}
-            color="bg-green-600"
+            gradient="from-green-500 to-green-700"
           />
           <AdminCard
             title="Daily Sales"
             value="Rs 12,450"
             icon={<BarChart3 />}
-            color="bg-purple-600"
+            gradient="from-purple-500 to-purple-700"
           />
           <AdminCard
             title="System Logs"
             value="128"
             icon={<Activity />}
-            color="bg-red-600"
+            gradient="from-red-500 to-red-700"
           />
         </div>
 
-        {/* Admin Actions */}
+        {/* Actions */}
         <div>
-          <h2 className="text-xl font-semibold mb-3">Admin Actions</h2>
+          <h2 className="text-2xl font-semibold mb-4">
+            Administrative Actions
+          </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <AdminAction
               title="Manage Users"
-              desc="Add / remove staff accounts"
+              desc="Staff accounts & permissions"
               link="/admin/users"
+              icon={<Users />}
               color="bg-blue-600"
             />
             <AdminAction
               title="System Settings"
-              desc="Roles, permissions, backup"
+              desc="Roles, backups, configs"
               link="/admin/settings"
+              icon={<Settings />}
               color="bg-gray-800"
             />
             <AdminAction
               title="Audit Logs"
-              desc="View system activities"
+              desc="Track every system event"
               link="/admin/logs"
+              icon={<Activity />}
               color="bg-red-600"
             />
           </div>
         </div>
 
         {/* System Health */}
-        <div className="bg-white rounded-2xl shadow p-6">
+        <div className="bg-white rounded-3xl shadow-xl p-6">
           <h2 className="text-xl font-semibold mb-4">System Health</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <HealthItem label="Database" status="Healthy" color="green" />
-            <HealthItem label="API Server" status="Running" color="green" />
-            <HealthItem label="Backup" status="Last: Today" color="blue" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <HealthItem
+              icon={<Database />}
+              label="Database"
+              status="Healthy"
+              color="green"
+            />
+            <HealthItem
+              icon={<Server />}
+              label="API Server"
+              status="Running"
+              color="green"
+            />
+            <HealthItem
+              icon={<Cloud />}
+              label="Cloud Backup"
+              status="Synced Today"
+              color="blue"
+            />
           </div>
         </div>
       </main>
@@ -98,37 +126,59 @@ const AdminDashboard: React.FC = () => {
   );
 };
 
-/* Components */
+/* ---------- Components ---------- */
 
-const AdminCard = ({ title, value, icon, color }: any) => (
-  <div className="bg-white rounded-2xl p-5 shadow hover:shadow-xl transition flex justify-between items-center">
-    <div>
-      <p className="text-gray-500 text-sm">{title}</p>
-      <h2 className="text-3xl font-bold">{value}</h2>
+const AdminCard = ({ title, value, icon, gradient }: any) => (
+  <div className="relative bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+    <div
+      className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradient} opacity-20 rounded-bl-full`}
+    />
+
+    <p className="text-gray-500 text-sm">{title}</p>
+    <h2 className="text-3xl font-bold mt-1">{value}</h2>
+
+    <div
+      className={`mt-4 w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-to-r ${gradient}`}
+    >
+      {icon}
     </div>
-    <div className={`${color} p-3 rounded-full text-white text-xl`}>{icon}</div>
   </div>
 );
 
-const AdminAction = ({ title, desc, link, color }: any) => (
+const AdminAction = ({ title, desc, link, icon, color }: any) => (
   <Link
     to={link}
-    className={`rounded-xl p-6 text-white ${color} hover:opacity-90 transition shadow-lg`}
+    className={`rounded-2xl p-6 text-white ${color} hover:scale-[1.03] hover:shadow-2xl transition-all flex justify-between items-center`}
   >
-    <h3 className="text-lg font-semibold">{title}</h3>
-    <p className="text-sm opacity-90 mt-1">{desc}</p>
+    <div>
+      <h3 className="text-lg font-semibold">{title}</h3>
+      <p className="text-sm opacity-90 mt-1">{desc}</p>
+    </div>
+    <div className="text-3xl opacity-80">{icon}</div>
   </Link>
 );
 
-const HealthItem = ({ label, status, color }: any) => (
-  <div className="border rounded-xl p-4 flex justify-between items-center">
-    <p className="font-medium">{label}</p>
-    <span
-      className={`px-3 py-1 rounded-full text-xs bg-${color}-100 text-${color}-700`}
-    >
-      {status}
-    </span>
-  </div>
-);
+const HealthItem = ({ icon, label, status, color }: any) => {
+  const colorMap: any = {
+    green: "bg-green-100 text-green-700",
+    blue: "bg-blue-100 text-blue-700",
+    red: "bg-red-100 text-red-700",
+  };
+
+  return (
+    <div className="border rounded-2xl p-5 flex justify-between items-center hover:shadow transition">
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-gray-100 rounded-lg">{icon}</div>
+        <p className="font-medium">{label}</p>
+      </div>
+
+      <span
+        className={`px-3 py-1 rounded-full text-xs font-semibold ${colorMap[color]}`}
+      >
+        {status}
+      </span>
+    </div>
+  );
+};
 
 export default AdminDashboard;
