@@ -1,42 +1,35 @@
+import { Bell, LogOut } from "lucide-react";
+
 type AdminHeaderProps = {
   adminName: string;
 };
 
 const AdminHeader = ({ adminName }: AdminHeaderProps) => {
   return (
-    <div style={styles.header}>
-      <h2>Admin Dashboard</h2>
+    <header className="h-16 bg-white shadow flex items-center justify-between px-6">
+      {/* Left */}
+      <h1 className="text-xl font-semibold text-gray-800">Admin Dashboard</h1>
 
-      <div style={styles.right}>
-        <span>Welcome, {adminName}</span>
-        <img
-          src="https://i.pravatar.cc/40"
-          alt="profile"
-          style={styles.avatar}
-        />
+      {/* Right */}
+      <div className="flex items-center gap-5">
+        <Bell className="text-gray-500 cursor-pointer hover:text-gray-700" />
+
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-600">
+            Welcome, <b>{adminName}</b>
+          </span>
+
+          <img
+            src="https://i.pravatar.cc/40"
+            alt="admin"
+            className="w-9 h-9 rounded-full border"
+          />
+
+          <LogOut className="text-red-500 cursor-pointer hover:text-red-600" />
+        </div>
       </div>
-    </div>
+    </header>
   );
-};
-
-const styles = {
-  header: {
-    height: "60px",
-    background: "white",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "0 20px",
-    boxShadow: "0 1px 5px rgba(0,0,0,0.1)",
-  },
-  right: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-  },
-  avatar: {
-    borderRadius: "50%",
-  },
 };
 
 export default AdminHeader;
