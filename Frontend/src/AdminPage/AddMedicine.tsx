@@ -26,10 +26,27 @@ const AddMedicine: React.FC = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // ✅ Updated: validation + reset
   const handleSubmit = (e: any) => {
     e.preventDefault();
+
+    if (!form.name || !form.quantity || !form.price) {
+      alert("Please fill all required fields!");
+      return;
+    }
+
     console.log("Medicine Added:", form);
     alert("Medicine added successfully!");
+
+    // Reset form
+    setForm({
+      name: "",
+      batch: "",
+      quantity: "",
+      expiry: "",
+      price: "",
+      category: "",
+    });
   };
 
   return (
