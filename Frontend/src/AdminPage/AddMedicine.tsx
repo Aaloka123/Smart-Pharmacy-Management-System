@@ -7,6 +7,7 @@ import {
   DollarSign,
   Save,
   ArrowLeft,
+  Loader2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Header from "../UserComponent/Header";
@@ -22,12 +23,14 @@ const AddMedicine: React.FC = () => {
     category: "",
   });
 
+  const [loading, setLoading] = useState(false); // ✅ new state
+
   const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ Updated: validation + reset
-  const handleSubmit = (e: any) => {
+  // ✅ Updated: validation + loading + reset
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     if (!form.name || !form.quantity || !form.price) {
@@ -35,18 +38,25 @@ const AddMedicine: React.FC = () => {
       return;
     }
 
-    console.log("Medicine Added:", form);
-    alert("Medicine added successfully!");
+    setLoading(true);
 
-    // Reset form
-    setForm({
-      name: "",
-      batch: "",
-      quantity: "",
-      expiry: "",
-      price: "",
-      category: "",
-    });
+    // fake API delay
+    setTimeout(() => {
+      console.log("Medicine Added:", form);
+      alert("Medicine added successfully!");
+
+      // Reset form
+      setForm({
+        name: "",
+        batch: "",
+        quantity: "",
+        expiry: "",
+        price: "",
+        category: "",
+      });
+
+      setLoading(false);
+    }, 1000);
   };
 
   return (
@@ -133,10 +143,25 @@ const AddMedicine: React.FC = () => {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-3 rounded-xl flex items-center justify-center gap-2 font-semibold hover:scale-[1.03] transition-all shadow-lg"
+            disabled={loading}
+            className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 font-semibold transition-all shadow-lg
+              ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 text-white hover:scale-[1.03]"
+              }`}
           >
-            <Save />
-            Save Medicine
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save />
+                Save Medicine
+              </>
+            )}
           </button>
         </form>
       </main>
