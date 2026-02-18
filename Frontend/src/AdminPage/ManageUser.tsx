@@ -48,109 +48,80 @@ const ManageUsers = () => {
   );
 
   return (
-    <div style={{ padding: "2rem", background: "#f3f6fb", minHeight: "100vh" }}>
-      <div
-        style={{
-          maxWidth: "1100px",
-          margin: "auto",
-          background: "white",
-          padding: "2rem",
-          borderRadius: "12px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-        }}
-      >
-        <h2 style={{ marginBottom: "1rem" }}>👥 Manage Users</h2>
+    <div className="min-h-screen bg-slate-100 p-6">
+      <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-6">
+        <h2 className="text-2xl font-bold mb-4">👥 Manage Users</h2>
 
         <input
           type="text"
           placeholder="Search users..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={{
-            padding: "10px 14px",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-            width: "300px",
-            marginBottom: "1.5rem",
-          }}
+          className="mb-4 w-72 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
         />
 
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ background: "#2563eb", color: "white" }}>
-              <th style={th}>ID</th>
-              <th style={th}>Name</th>
-              <th style={th}>Email</th>
-              <th style={th}>Role</th>
-              <th style={th}>Status</th>
-              <th style={th}>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredUsers.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={6}
-                  style={{ textAlign: "center", padding: "1rem" }}
-                >
-                  No users found
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-blue-600 text-white">
+                <th className="p-3 text-left">ID</th>
+                <th className="p-3 text-left">Name</th>
+                <th className="p-3 text-left">Email</th>
+                <th className="p-3 text-left">Role</th>
+                <th className="p-3 text-left">Status</th>
+                <th className="p-3 text-left">Action</th>
               </tr>
-            ) : (
-              filteredUsers.map((user) => (
-                <tr key={user.id} style={{ borderBottom: "1px solid #eee" }}>
-                  <td style={td}>{user.id}</td>
-                  <td style={td}>{user.name}</td>
-                  <td style={td}>{user.email}</td>
-                  <td style={td}>
-                    <span
-                      style={{
-                        background: "#e0e7ff",
-                        padding: "4px 10px",
-                        borderRadius: "20px",
-                        fontSize: "13px",
-                      }}
-                    >
-                      {user.role}
-                    </span>
-                  </td>
-                  <td style={td}>
-                    <span
-                      style={{
-                        color: user.status === "Active" ? "green" : "red",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {user.status}
-                    </span>
-                  </td>
-                  <td style={td}>
-                    <button
-                      onClick={() => handleDelete(user.id)}
-                      style={{
-                        background: "#ef4444",
-                        color: "white",
-                        border: "none",
-                        padding: "6px 14px",
-                        borderRadius: "6px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Delete
-                    </button>
+            </thead>
+
+            <tbody>
+              {filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="text-center py-6 text-gray-500">
+                    No users found
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                filteredUsers.map((user) => (
+                  <tr
+                    key={user.id}
+                    className="border-b hover:bg-gray-50 transition"
+                  >
+                    <td className="p-3">{user.id}</td>
+                    <td className="p-3 font-medium">{user.name}</td>
+                    <td className="p-3">{user.email}</td>
+                    <td className="p-3">
+                      <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm">
+                        {user.role}
+                      </span>
+                    </td>
+                    <td className="p-3">
+                      <span
+                        className={`font-semibold ${
+                          user.status === "Active"
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        {user.status}
+                      </span>
+                    </td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="bg-red-500 text-white px-4 py-1 rounded-lg hover:bg-red-600 transition"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
 };
-
-const th = { padding: "12px", textAlign: "left" };
-const td = { padding: "12px" };
 
 export default ManageUsers;
