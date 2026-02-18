@@ -8,6 +8,7 @@ import Inventory from "./UserPage/Inventory";
 import Reports from "./UserPage/Reports";
 import Sales from "./UserPage/Sales";
 import AdminDashboard from "./AdminPage/AdminDashboard";
+import ManageUsers from "./AdminPage/ManageUser";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/sales" element={<Sales />} />
         <Route path="/admin/*" element={<AdminDashboard />} />
         <Route path="/admin/add-medicine" element={<AddMedicine />} />
+        <Route path="/admin/users" element={<ManageUsers />} />
       </Routes>
     </BrowserRouter>
   );
