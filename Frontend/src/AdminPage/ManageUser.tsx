@@ -92,16 +92,11 @@ const ManageUsers: React.FC = () => {
             </thead>
             <tbody>
               {filteredUsers.map((user) => (
-                <tr
-                  key={user.id}
-                  className="border-t hover:bg-gray-50 transition"
-                >
+                <tr key={user.id} className="border-t hover:bg-gray-50">
                   <td className="p-4 font-medium">{user.name}</td>
                   <td className="p-4">{user.email}</td>
-                  <td className="p-4">
-                    <span className="flex items-center gap-1">
-                      <Shield size={14} /> {user.role}
-                    </span>
+                  <td className="p-4 flex items-center gap-1">
+                    <Shield size={14} /> {user.role}
                   </td>
                   <td className="p-4">
                     {user.status === "Active" ? (
@@ -115,10 +110,10 @@ const ManageUsers: React.FC = () => {
                     )}
                   </td>
                   <td className="p-4 flex justify-center gap-3">
-                    <button className="text-blue-600 hover:scale-110 transition">
+                    <button className="text-blue-600 hover:scale-110">
                       <Edit size={16} />
                     </button>
-                    <button className="text-red-600 hover:scale-110 transition">
+                    <button className="text-red-600 hover:scale-110">
                       <Trash2 size={16} />
                     </button>
                   </td>
