@@ -13,6 +13,9 @@ const NewSale: React.FC = () => {
     { name: "", price: 0, quantity: 1 },
   ]);
 
+  const invoiceNumber = `INV-${Math.floor(1000 + Math.random() * 9000)}`;
+  const today = new Date().toLocaleDateString();
+
   const handleItemChange = (
     index: number,
     field: keyof Item,
@@ -31,14 +34,16 @@ const NewSale: React.FC = () => {
   };
 
   const removeItem = (index: number) => {
-    const updated = items.filter((_, i) => i !== index);
-    setItems(updated);
+    setItems(items.filter((_, i) => i !== index));
   };
 
-  const total = items.reduce(
+  const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0,
   );
+
+  const tax = subtotal * 0.13; // 13% VAT (example for Nepal)
+  const total = subtotal + tax;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,14 +51,21 @@ const NewSale: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-5xl mx-auto bg-white shadow-2xl rounded-3xl p-8">
-        <h1 className="text-3xl font-bold mb-6">Create New Invoice</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-gray-200 p-8">
+      <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-green-600 to-emerald-700 text-white p-8">
+          <h1 className="text-3xl font-bold">New Sales Invoice</h1>
+          <div className="flex justify-between mt-4 text-sm opacity-90">
+            <span>Invoice No: {invoiceNumber}</span>
+            <span>Date: {today}</span>
+          </div>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Customer Name */}
+        <form onSubmit={handleSubmit} className="p-8 space-y-8">
+          {/* Customer Section */}
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-semibold mb-2">
               Customer Name
             </label>
             <input
@@ -61,7 +73,7 @@ const NewSale: React.FC = () => {
               value={customer}
               onChange={(e) => setCustomer(e.target.value)}
               required
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
+              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm"
               placeholder="Enter customer name"
             />
           </div>
@@ -70,81 +82,107 @@ const NewSale: React.FC = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4">Invoice Items</h2>
 
-            <div className="space-y-4">
-              {items.map((item, index) => (
-                <div
-                  key={index}
-                  className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center"
-                >
-                  <input
-                    type="text"
-                    placeholder="Medicine Name"
-                    value={item.name}
-                    onChange={(e) =>
-                      handleItemChange(index, "name", e.target.value)
-                    }
-                    required
-                    className="p-3 border rounded-xl"
-                  />
+            <div className="overflow-x-auto">
+              <table className="w-full border rounded-xl overflow-hidden">
+                <thead className="bg-gray-100 text-gray-600 text-sm">
+                  <tr>
+                    <th className="p-3 text-left">Medicine</th>
+                    <th className="p-3 text-left">Price</th>
+                    <th className="p-3 text-left">Qty</th>
+                    <th className="p-3 text-left">Total</th>
+                    <th className="p-3"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((item, index) => (
+                    <tr
+                      key={index}
+                      className="border-t hover:bg-gray-50 transition"
+                    >
+                      <td className="p-3">
+                        <input
+                          type="text"
+                          value={item.name}
+                          onChange={(e) =>
+                            handleItemChange(index, "name", e.target.value)
+                          }
+                          required
+                          className="w-full p-2 border rounded-lg"
+                        />
+                      </td>
 
-                  <input
-                    type="number"
-                    placeholder="Price"
-                    value={item.price}
-                    onChange={(e) =>
-                      handleItemChange(index, "price", e.target.value)
-                    }
-                    required
-                    className="p-3 border rounded-xl"
-                  />
+                      <td className="p-3">
+                        <input
+                          type="number"
+                          value={item.price}
+                          onChange={(e) =>
+                            handleItemChange(index, "price", e.target.value)
+                          }
+                          required
+                          className="w-full p-2 border rounded-lg"
+                        />
+                      </td>
 
-                  <input
-                    type="number"
-                    placeholder="Quantity"
-                    value={item.quantity}
-                    onChange={(e) =>
-                      handleItemChange(index, "quantity", e.target.value)
-                    }
-                    required
-                    className="p-3 border rounded-xl"
-                  />
+                      <td className="p-3">
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) =>
+                            handleItemChange(index, "quantity", e.target.value)
+                          }
+                          required
+                          className="w-full p-2 border rounded-lg"
+                        />
+                      </td>
 
-                  <div className="font-semibold">
-                    Rs {item.price * item.quantity}
-                  </div>
+                      <td className="p-3 font-semibold">
+                        Rs {(item.price * item.quantity).toFixed(2)}
+                      </td>
 
-                  <button
-                    type="button"
-                    onClick={() => removeItem(index)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <Trash2 />
-                  </button>
-                </div>
-              ))}
+                      <td className="p-3 text-center">
+                        <button
+                          type="button"
+                          onClick={() => removeItem(index)}
+                          className="text-red-500 hover:text-red-700 transition"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
             <button
               type="button"
               onClick={addItem}
-              className="mt-4 flex items-center gap-2 text-green-600 hover:text-green-800"
+              className="mt-4 flex items-center gap-2 text-green-600 font-medium hover:text-green-800 transition"
             >
               <Plus size={18} /> Add Item
             </button>
           </div>
 
-          {/* Total Section */}
-          <div className="flex justify-between items-center border-t pt-4">
-            <h2 className="text-xl font-bold">Total:</h2>
-            <h2 className="text-2xl font-bold text-green-600">
-              Rs {total.toFixed(2)}
-            </h2>
+          {/* Summary Section */}
+          <div className="bg-gray-50 rounded-2xl p-6 space-y-3 shadow-inner">
+            <div className="flex justify-between">
+              <span>Subtotal</span>
+              <span>Rs {subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>VAT (13%)</span>
+              <span>Rs {tax.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-xl font-bold text-green-700 border-t pt-3">
+              <span>Grand Total</span>
+              <span>Rs {total.toFixed(2)}</span>
+            </div>
           </div>
 
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 transition text-lg font-semibold"
+            className="w-full bg-gradient-to-r from-green-600 to-emerald-700 text-white py-3 rounded-xl hover:opacity-90 transition text-lg font-semibold shadow-lg"
           >
             Generate Invoice
           </button>
