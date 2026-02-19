@@ -62,8 +62,8 @@ const NewSale: React.FC = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-8">
-          {/* Customer Section */}
+        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+          {/* Customer Name */}
           <div className="transition-all duration-500 hover:scale-[1.01]">
             <label className="block text-sm font-semibold mb-2">
               Customer Name
@@ -75,6 +75,18 @@ const NewSale: React.FC = () => {
               required
               className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm"
               placeholder="Enter customer name"
+            />
+          </div>
+
+          {/* Customer Email */}
+          <div className="transition-all duration-500 hover:scale-[1.01]">
+            <label className="block text-sm font-semibold mb-2">
+              Customer Email
+            </label>
+            <input
+              type="email"
+              placeholder="Enter customer email"
+              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm"
             />
           </div>
 
