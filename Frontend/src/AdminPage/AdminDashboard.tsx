@@ -22,13 +22,13 @@ const AdminDashboard: React.FC = () => {
 
       <main className="flex-grow max-w-7xl mx-auto p-6 space-y-10">
         {/* Hero */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-gray-900 to-gray-700 rounded-3xl p-10 text-white shadow-2xl transform transition-all duration-500 hover:scale-[1.02] hover:shadow-3xl">
+        <div className="relative overflow-hidden bg-gradient-to-r from-gray-900 to-gray-700 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500 hover:scale-[1.02]">
           <div className="absolute right-10 top-10 opacity-10 text-[120px]">
             <ShieldCheck />
           </div>
 
           <h1 className="text-4xl font-bold flex items-center gap-3">
-            <ShieldCheck className="text-green-400 animate-pulse hover:rotate-12 transition-transform duration-700" />
+            <ShieldCheck className="text-green-400 animate-pulse transition-transform duration-700" />
             Admin Control Panel
           </h1>
           <p className="opacity-80 mt-2">
@@ -58,64 +58,69 @@ const AdminDashboard: React.FC = () => {
           />
         </div>
 
-        {/* KPIs */}
+        {/* KPI Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <AdminCard
             title="Total Users"
             value="52"
             icon={<Users />}
             gradient="from-blue-500 to-blue-700"
-            trend="↑ 5% since last week"
           />
           <AdminCard
             title="Medicines"
             value="245"
             icon={<Package />}
             gradient="from-green-500 to-green-700"
-            trend="↑ 2 new today"
           />
           <AdminCard
             title="Daily Sales"
             value="Rs 12,450"
             icon={<BarChart3 />}
             gradient="from-purple-500 to-purple-700"
-            trend="↑ 8% since yesterday"
           />
           <AdminCard
             title="System Logs"
             value="128"
             icon={<Activity />}
             gradient="from-red-500 to-red-700"
-            trend="5 new alerts"
           />
         </div>
 
-        {/* Admin Actions */}
+        {/* 🔥 NEW CLICKABLE CELLS */}
         <div>
-          <h2 className="text-2xl font-semibold mb-4">
-            Administrative Actions
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <AdminAction
-              title="Manage Users"
-              desc="Staff accounts & permissions"
-              link="/admin/users"
-              icon={<Users />}
-              color="bg-blue-600"
+          <h2 className="text-2xl font-semibold mb-4">Quick Navigation</h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <DashboardCell
+              title="Add Medicine"
+              desc="Create new medicine entry"
+              icon={<Package />}
+              link="/admin/add-medicine"
+              gradient="from-green-500 to-emerald-600"
             />
-            <AdminAction
-              title="System Settings"
-              desc="Roles, backups, configs"
-              link="/admin/settings"
-              icon={<Settings />}
-              color="bg-gray-800"
+
+            <DashboardCell
+              title="View Reports"
+              desc="Check sales & analytics"
+              icon={<BarChart3 />}
+              link="/admin/reports"
+              gradient="from-purple-500 to-indigo-600"
             />
-            <AdminAction
-              title="Audit Logs"
-              desc="Track every system event"
-              link="/admin/logs"
-              icon={<Activity />}
-              color="bg-red-600"
+
+            <DashboardCell
+              title="Manage Inventory"
+              desc="Stock control system"
+              icon={<Database />}
+              link="/admin/inventory"
+              gradient="from-blue-500 to-cyan-600"
+            />
+
+            <DashboardCell
+              title="System Monitoring"
+              desc="Server & logs overview"
+              icon={<Server />}
+              link="/admin/monitoring"
+              gradient="from-red-500 to-rose-600"
             />
           </div>
         </div>
@@ -144,29 +149,6 @@ const AdminDashboard: React.FC = () => {
             />
           </div>
         </div>
-
-        {/* Recent Activity */}
-        <div className="bg-white rounded-3xl shadow-xl p-6">
-          <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-          <ul className="space-y-4">
-            <ActivityItem
-              text="Paracetamol sold (10 units)"
-              time="2 mins ago"
-              color="green"
-            />
-            <ActivityItem
-              text="Stock low for Amoxicillin"
-              time="1 hour ago"
-              color="yellow"
-            />
-            <ActivityItem
-              text="New user added: Niki Bhasima"
-              time="Today"
-              color="blue"
-            />
-            <ActivityItem text="2 items expired" time="Today" color="red" />
-          </ul>
-        </div>
       </main>
 
       <Footer />
@@ -178,45 +160,49 @@ const AdminDashboard: React.FC = () => {
 
 const QuickStat = ({ label, value, icon, color }: any) => (
   <div
-    className={`flex items-center justify-between rounded-2xl p-4 shadow bg-white ${color} transform transition-all hover:scale-105 hover:shadow-2xl hover:rotate-[1deg]`}
+    className={`flex items-center justify-between rounded-2xl p-4 shadow bg-white ${color} transition hover:scale-105 hover:shadow-xl`}
   >
     <div>
       <p className="text-sm font-medium">{label}</p>
       <h2 className="text-2xl font-bold">{value}</h2>
     </div>
-    <div className="text-3xl opacity-70 hover:rotate-[15deg] transition-all">
-      {icon}
-    </div>
+    <div className="text-3xl opacity-70">{icon}</div>
   </div>
 );
 
-const AdminCard = ({ title, value, icon, gradient, trend }: any) => (
-  <div className="relative bg-white rounded-3xl p-6 shadow-lg overflow-hidden transform transition-all duration-500 hover:scale-[1.05] hover:shadow-3xl hover:-translate-y-1">
+const AdminCard = ({ title, value, icon, gradient }: any) => (
+  <div className="relative bg-white rounded-3xl p-6 shadow-lg overflow-hidden transition hover:scale-105 hover:shadow-2xl">
     <div
       className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradient} opacity-20 rounded-bl-full`}
     />
     <p className="text-gray-500 text-sm">{title}</p>
     <h2 className="text-3xl font-bold mt-1">{value}</h2>
-    {trend && <p className="text-xs text-gray-400 mt-1">{trend}</p>}
     <div
-      className={`mt-4 w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-to-r ${gradient} transform transition-all hover:rotate-12 hover:scale-110`}
+      className={`mt-4 w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-to-r ${gradient}`}
     >
       {icon}
     </div>
   </div>
 );
 
-const AdminAction = ({ title, desc, link, icon, color }: any) => (
+const DashboardCell = ({ title, desc, icon, link, gradient }: any) => (
   <Link
     to={link}
-    className={`rounded-2xl p-6 text-white ${color} flex justify-between items-center transform transition-all duration-500 hover:scale-[1.05] hover:shadow-3xl hover:-translate-y-1 hover:rotate-[1deg]`}
+    className="group relative bg-white rounded-3xl p-6 shadow-lg overflow-hidden transition-all duration-500 hover:scale-105 hover:-translate-y-2 hover:shadow-2xl"
   >
-    <div>
+    <div
+      className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-10 transition duration-500`}
+    />
+
+    <div className="relative z-10 flex flex-col gap-3">
+      <div
+        className={`w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-r ${gradient} text-white transition group-hover:rotate-12 group-hover:scale-110`}
+      >
+        {icon}
+      </div>
+
       <h3 className="text-lg font-semibold">{title}</h3>
-      <p className="text-sm opacity-90 mt-1">{desc}</p>
-    </div>
-    <div className="text-3xl opacity-80 hover:rotate-12 transition-all">
-      {icon}
+      <p className="text-sm text-gray-500">{desc}</p>
     </div>
   </Link>
 );
@@ -230,11 +216,9 @@ const HealthItem = ({ icon, label, status, color }: any) => {
   };
 
   return (
-    <div className="border rounded-2xl p-5 flex justify-between items-center hover:shadow-lg hover:scale-[1.02] transition">
+    <div className="border rounded-2xl p-5 flex justify-between items-center hover:shadow-lg transition">
       <div className="flex items-center gap-3">
-        <div className="p-2 bg-gray-100 rounded-lg hover:scale-110 transition-all">
-          {icon}
-        </div>
+        <div className="p-2 bg-gray-100 rounded-lg">{icon}</div>
         <p className="font-medium">{label}</p>
       </div>
       <span
@@ -243,24 +227,6 @@ const HealthItem = ({ icon, label, status, color }: any) => {
         {status}
       </span>
     </div>
-  );
-};
-
-const ActivityItem = ({ text, time, color }: any) => {
-  const colorMap: any = {
-    green: "bg-green-500",
-    blue: "bg-blue-500",
-    red: "bg-red-500",
-    yellow: "bg-yellow-500",
-  };
-  return (
-    <li className="flex justify-between items-center transform transition-all hover:scale-[1.02] hover:bg-gray-50 rounded-lg p-2">
-      <div className="flex items-center gap-3">
-        <span className={`w-3 h-3 rounded-full ${colorMap[color]}`} />
-        <p className="text-sm">{text}</p>
-      </div>
-      <span className="text-xs text-gray-400">{time}</span>
-    </li>
   );
 };
 
