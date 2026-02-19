@@ -42,7 +42,7 @@ const NewSale: React.FC = () => {
     0,
   );
 
-  const tax = subtotal * 0.13; // 13% VAT (example for Nepal)
+  const tax = subtotal * 0.13;
   const total = subtotal + tax;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -52,7 +52,7 @@ const NewSale: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-gray-200 p-8">
-      <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
+      <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-3xl overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-600 to-emerald-700 text-white p-8">
           <h1 className="text-3xl font-bold">New Sales Invoice</h1>
@@ -64,7 +64,7 @@ const NewSale: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="p-8 space-y-8">
           {/* Customer Section */}
-          <div>
+          <div className="transition-all duration-500 hover:scale-[1.01]">
             <label className="block text-sm font-semibold mb-2">
               Customer Name
             </label>
@@ -79,7 +79,7 @@ const NewSale: React.FC = () => {
           </div>
 
           {/* Items Table */}
-          <div>
+          <div className="transition-all duration-500 hover:scale-[1.01]">
             <h2 className="text-xl font-semibold mb-4">Invoice Items</h2>
 
             <div className="overflow-x-auto">
@@ -90,14 +90,14 @@ const NewSale: React.FC = () => {
                     <th className="p-3 text-left">Price</th>
                     <th className="p-3 text-left">Qty</th>
                     <th className="p-3 text-left">Total</th>
-                    <th className="p-3"></th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   {items.map((item, index) => (
                     <tr
                       key={index}
-                      className="border-t hover:bg-gray-50 transition"
+                      className="border-t transition-all duration-300 hover:bg-gray-50 hover:scale-[1.01]"
                     >
                       <td className="p-3">
                         <input
@@ -157,14 +157,14 @@ const NewSale: React.FC = () => {
             <button
               type="button"
               onClick={addItem}
-              className="mt-4 flex items-center gap-2 text-green-600 font-medium hover:text-green-800 transition"
+              className="mt-4 flex items-center gap-2 text-green-600 font-medium transition-all duration-300 hover:scale-105 hover:text-green-800"
             >
               <Plus size={18} /> Add Item
             </button>
           </div>
 
           {/* Summary Section */}
-          <div className="bg-gray-50 rounded-2xl p-6 space-y-3 shadow-inner">
+          <div className="bg-gray-50 rounded-2xl p-6 space-y-3 shadow-inner transition-all duration-500 hover:scale-[1.02] hover:shadow-xl">
             <div className="flex justify-between">
               <span>Subtotal</span>
               <span>Rs {subtotal.toFixed(2)}</span>
@@ -182,7 +182,7 @@ const NewSale: React.FC = () => {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-green-600 to-emerald-700 text-white py-3 rounded-xl hover:opacity-90 transition text-lg font-semibold shadow-lg"
+            className="w-full bg-gradient-to-r from-green-600 to-emerald-700 text-white py-3 rounded-xl text-lg font-semibold shadow-lg transition-all duration-500 hover:scale-105 hover:-translate-y-1 hover:shadow-2xl"
           >
             Generate Invoice
           </button>
