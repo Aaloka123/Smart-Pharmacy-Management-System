@@ -25,6 +25,7 @@ const App = () => {
         <Route path="/admin/*" element={<AdminDashboard />} />
         <Route path="/admin/add-medicine" element={<AddMedicine />} />
         <Route path="/admin/users" element={<ManageUsers />} />
+        <Route path="/admin/reports" element={<Reports />} />
       </Routes>
     </BrowserRouter>
   );
