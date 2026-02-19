@@ -7,6 +7,14 @@ interface Item {
   quantity: number;
 }
 
+const medicineOptions = [
+  "Paracetamol",
+  "Amoxicillin",
+  "Ibuprofen",
+  "Cough Syrup",
+  "Vitamin C",
+];
+
 const NewSale: React.FC = () => {
   const [customer, setCustomer] = useState("");
   const [items, setItems] = useState<Item[]>([
@@ -41,7 +49,6 @@ const NewSale: React.FC = () => {
     (sum, item) => sum + item.price * item.quantity,
     0,
   );
-
   const tax = subtotal * 0.13;
   const total = subtotal + tax;
 
@@ -73,7 +80,7 @@ const NewSale: React.FC = () => {
               value={customer}
               onChange={(e) => setCustomer(e.target.value)}
               required
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm"
+              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm hover:shadow-md transition-all"
               placeholder="Enter customer name"
             />
           </div>
@@ -86,7 +93,7 @@ const NewSale: React.FC = () => {
             <input
               type="email"
               placeholder="Enter customer email"
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm"
+              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm hover:shadow-md transition-all"
             />
           </div>
 
@@ -109,18 +116,24 @@ const NewSale: React.FC = () => {
                   {items.map((item, index) => (
                     <tr
                       key={index}
-                      className="border-t transition-all duration-300 hover:bg-gray-50 hover:scale-[1.01]"
+                      className="border-t transition-all duration-300 hover:bg-gray-50 hover:scale-[1.01] hover:shadow-md"
                     >
                       <td className="p-3">
-                        <input
-                          type="text"
+                        <select
                           value={item.name}
                           onChange={(e) =>
                             handleItemChange(index, "name", e.target.value)
                           }
                           required
-                          className="w-full p-2 border rounded-lg"
-                        />
+                          className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none hover:shadow-md transition-all"
+                        >
+                          <option value="">Select Medicine</option>
+                          {medicineOptions.map((med) => (
+                            <option key={med} value={med}>
+                              {med}
+                            </option>
+                          ))}
+                        </select>
                       </td>
 
                       <td className="p-3">
@@ -131,7 +144,7 @@ const NewSale: React.FC = () => {
                             handleItemChange(index, "price", e.target.value)
                           }
                           required
-                          className="w-full p-2 border rounded-lg"
+                          className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none hover:shadow-md transition-all"
                         />
                       </td>
 
@@ -143,7 +156,7 @@ const NewSale: React.FC = () => {
                             handleItemChange(index, "quantity", e.target.value)
                           }
                           required
-                          className="w-full p-2 border rounded-lg"
+                          className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none hover:shadow-md transition-all"
                         />
                       </td>
 
@@ -169,7 +182,7 @@ const NewSale: React.FC = () => {
             <button
               type="button"
               onClick={addItem}
-              className="mt-4 flex items-center gap-2 text-green-600 font-medium transition-all duration-300 hover:scale-105 hover:text-green-800"
+              className="mt-4 flex items-center gap-2 text-green-600 font-medium transition-all duration-300 hover:scale-105 hover:text-green-800 hover:rotate-12"
             >
               <Plus size={18} /> Add Item
             </button>
@@ -185,7 +198,7 @@ const NewSale: React.FC = () => {
               <span>VAT (13%)</span>
               <span>Rs {tax.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-xl font-bold text-green-700 border-t pt-3">
+            <div className="flex justify-between text-xl font-bold text-green-700 border-t pt-3 bg-gradient-to-r from-green-100 to-green-200 rounded-xl px-3 py-2">
               <span>Grand Total</span>
               <span>Rs {total.toFixed(2)}</span>
             </div>
