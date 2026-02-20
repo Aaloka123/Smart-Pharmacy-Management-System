@@ -22,11 +22,11 @@ const StatCard = ({
   icon: React.ReactNode;
   gradient: string;
 }) => (
-  <div className="group relative bg-white/80 backdrop-blur-md rounded-3xl p-6 shadow-xl overflow-hidden transition-all duration-500 hover:scale-[1.06] hover:-translate-y-3 hover:shadow-2xl">
+  <div className="group relative bg-white/80 backdrop-blur-md rounded-3xl p-6 shadow-xl overflow-hidden border border-white/40 transition-all duration-500 hover:scale-[1.06] hover:-translate-y-3 hover:shadow-2xl">
     <div
       className={`absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br ${gradient} opacity-20 rounded-full blur-2xl`}
     />
-    <p className="text-gray-500 text-sm">{title}</p>
+    <p className="text-gray-500 text-sm tracking-wide">{title}</p>
     <h2 className="text-3xl font-bold mt-1">{value}</h2>
     <div
       className={`mt-5 w-14 h-14 rounded-2xl flex items-center justify-center text-white bg-gradient-to-r ${gradient} transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110 shadow-lg`}
@@ -41,6 +41,7 @@ const StatCard = ({
 const Reports: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col relative bg-gradient-to-br from-slate-100 via-gray-100 to-slate-200 overflow-hidden">
+      {/* Floating Background Blobs */}
       <div className="absolute top-10 left-10 w-72 h-72 bg-blue-400 opacity-20 blur-3xl rounded-full animate-pulse" />
       <div className="absolute bottom-10 right-10 w-72 h-72 bg-purple-400 opacity-20 blur-3xl rounded-full animate-pulse" />
 
@@ -48,7 +49,7 @@ const Reports: React.FC = () => {
 
       <main className="flex-grow max-w-7xl mx-auto w-full p-6 space-y-12 relative z-10">
         {/* 🔥 Hero Section */}
-        <div className="relative bg-gradient-to-r from-blue-700 to-indigo-700 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 hover:shadow-3xl">
+        <div className="relative bg-gradient-to-r from-blue-700 to-indigo-700 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500 hover:scale-[1.02]">
           <div className="absolute right-10 top-10 opacity-10 text-[140px]">
             <TrendingUp />
           </div>
@@ -61,15 +62,15 @@ const Reports: React.FC = () => {
               </p>
             </div>
 
-            <button className="flex items-center gap-3 bg-white text-blue-700 px-6 py-3 rounded-2xl font-semibold shadow-lg transition-all duration-500 hover:scale-110 hover:-translate-y-1 hover:bg-gray-100 hover:shadow-2xl">
+            <button className="flex items-center gap-3 bg-white text-blue-700 px-6 py-3 rounded-2xl font-semibold shadow-lg hover:scale-105 hover:bg-gray-100 transition-all duration-300">
               <Download size={20} />
               Export Report
             </button>
           </div>
         </div>
 
-        {/* 🔎 Glass Filter Panel */}
-        <div className="bg-white/70 backdrop-blur-lg shadow-xl rounded-3xl p-6 flex flex-wrap gap-6 items-center border border-white/50 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 hover:shadow-2xl">
+        {/* 🔎 Filter Panel */}
+        <div className="bg-white/70 backdrop-blur-lg shadow-2xl rounded-3xl p-6 flex flex-wrap gap-6 items-center border border-white/50 transition hover:shadow-3xl">
           <div className="flex items-center gap-3">
             <Calendar size={18} />
             <span className="font-medium">From</span>
@@ -87,7 +88,7 @@ const Reports: React.FC = () => {
             />
           </div>
 
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-xl transition-all duration-500 hover:bg-blue-700 hover:scale-110 hover:-translate-y-1 hover:shadow-xl">
+          <button className="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 hover:scale-105 transition">
             Apply Filters
           </button>
         </div>
@@ -120,9 +121,20 @@ const Reports: React.FC = () => {
           />
         </div>
 
-        {/* 📋 Modern Table */}
-        <div className="bg-white rounded-3xl shadow-xl p-8 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 hover:shadow-2xl">
-          <h2 className="text-2xl font-semibold mb-6">Sales Transactions</h2>
+        {/* 📋 Sales Table */}
+        <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100 transition hover:shadow-3xl">
+          {/* Header + Search */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+            <h2 className="text-2xl font-semibold tracking-wide">
+              Sales Transactions
+            </h2>
+
+            <input
+              type="text"
+              placeholder="Search medicine..."
+              className="border rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition-all duration-300 hover:shadow-md"
+            />
+          </div>
 
           <div className="overflow-x-auto rounded-2xl">
             <table className="w-full text-sm">
@@ -143,14 +155,14 @@ const Reports: React.FC = () => {
                 ].map((row, i) => (
                   <tr
                     key={i}
-                    className="even:bg-gray-50 transition-all duration-500 hover:bg-blue-50 hover:scale-[1.02] hover:-translate-y-1 hover:shadow-md"
+                    className="even:bg-gray-50 hover:bg-blue-50 hover:scale-[1.01] transition-all duration-300"
                   >
                     <td className="p-4">{row[0]}</td>
                     <td className="p-4 font-medium">{row[1]}</td>
                     <td className="p-4 text-center">{row[2]}</td>
                     <td className="p-4 text-right font-semibold">{row[3]}</td>
                     <td className="p-4 text-center">
-                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold shadow-sm transition-all duration-300 hover:scale-110 hover:shadow-md">
                         {row[4]}
                       </span>
                     </td>
@@ -161,7 +173,7 @@ const Reports: React.FC = () => {
           </div>
         </div>
 
-        {/* 📈 Premium Insights */}
+        {/* 📈 Insights */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
             {
@@ -185,7 +197,7 @@ const Reports: React.FC = () => {
           ].map((item, i) => (
             <div
               key={i}
-              className="bg-white rounded-3xl shadow-xl p-6 transition-all duration-500 hover:scale-[1.06] hover:-translate-y-3 hover:shadow-2xl"
+              className="bg-white rounded-3xl shadow-xl p-6 transition-all duration-500 hover:scale-[1.05] hover:-translate-y-2 hover:shadow-2xl"
             >
               <h3 className="font-semibold mb-3">{item.title}</h3>
               <p className="text-xl font-bold">{item.value}</p>
