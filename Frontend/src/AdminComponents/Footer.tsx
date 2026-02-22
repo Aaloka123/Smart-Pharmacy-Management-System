@@ -1,83 +1,87 @@
 import React from "react";
-import { Github, Linkedin, Twitter } from "lucide-react";
+import { Github, Linkedin, Twitter, Mail, ShieldCheck } from "lucide-react";
 
 const AdminFooter: React.FC = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300 mt-12">
-      <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <footer className="relative bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-300 mt-16">
+      <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
         {/* About Section */}
-        <div>
-          <h3 className="text-white font-semibold text-lg mb-2">
-            PharmaCare Admin
-          </h3>
-          <p className="text-sm text-gray-400">
-            Secure and efficient management for your pharmacy system. Monitor
-            users, medicines, and analytics from a single panel.
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-3 mb-2">
+            <ShieldCheck className="text-blue-500" size={24} />
+            <h3 className="text-white font-bold text-xl">PharmaCare Admin</h3>
+          </div>
+          <p className="text-gray-400 text-sm leading-relaxed">
+            Secure and efficient pharmacy management platform. Monitor users,
+            medicines, and analytics from a single, centralized admin dashboard.
           </p>
+          <div className="flex items-center gap-2 text-gray-400 text-sm mt-2">
+            <Mail size={18} />
+            support@pharmacare.com
+          </div>
         </div>
 
-        {/* Links Section */}
-        <div>
-          <h3 className="text-white font-semibold text-lg mb-2">Quick Links</h3>
-          <ul className="space-y-1 text-gray-400">
-            <li>
-              <a href="/admin/users" className="hover:text-white transition">
-                Manage Users
-              </a>
-            </li>
-            <li>
-              <a href="/admin/settings" className="hover:text-white transition">
-                System Settings
-              </a>
-            </li>
-            <li>
-              <a href="/admin/logs" className="hover:text-white transition">
-                Audit Logs
-              </a>
-            </li>
-            <li>
-              <a href="/reports" className="hover:text-white transition">
-                Reports
-              </a>
-            </li>
+        {/* Quick Links */}
+        <div className="flex flex-col gap-4">
+          <h3 className="text-white font-semibold text-lg">Quick Links</h3>
+          <ul className="space-y-2 text-gray-400">
+            {[
+              { name: "Manage Users", link: "/admin/users" },
+              { name: "System Settings", link: "/admin/settings" },
+              { name: "Audit Logs", link: "/admin/logs" },
+              { name: "Reports", link: "/reports" },
+            ].map((item, index) => (
+              <li key={index}>
+                <a
+                  href={item.link}
+                  className="hover:text-white hover:translate-x-2 transition-all duration-200 inline-block"
+                >
+                  {item.name}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
 
-        {/* Social / Contact */}
-        <div>
-          <h3 className="text-white font-semibold text-lg mb-2">Connect</h3>
-          <div className="flex gap-4">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white"
-            >
-              <Github size={24} />
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white"
-            >
-              <Linkedin size={24} />
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white"
-            >
-              <Twitter size={24} />
-            </a>
+        {/* Social / Connect */}
+        <div className="flex flex-col gap-4">
+          <h3 className="text-white font-semibold text-lg">Connect With Us</h3>
+          <div className="flex items-center gap-4">
+            {[
+              {
+                icon: <Github size={22} />,
+                link: "https://github.com",
+                color: "hover:bg-gray-700",
+              },
+              {
+                icon: <Linkedin size={22} />,
+                link: "https://linkedin.com",
+                color: "hover:bg-blue-600",
+              },
+              {
+                icon: <Twitter size={22} />,
+                link: "https://twitter.com",
+                color: "hover:bg-sky-500",
+              },
+            ].map((item, idx) => (
+              <a
+                key={idx}
+                href={item.link}
+                target="_blank"
+                rel="noreferrer"
+                className={`p-3 bg-gray-800 rounded-full hover:scale-110 transition-transform duration-300 shadow-lg ${item.color} flex items-center justify-center`}
+              >
+                {item.icon}
+              </a>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800 mt-6 py-4 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} PharmaCare. All rights reserved.
+      <div className="border-t border-gray-700 py-5 text-center text-sm text-gray-400 bg-gray-900">
+        © {new Date().getFullYear()} PharmaCare. All rights reserved. | Made
+        with ❤️ for healthcare.
       </div>
     </footer>
   );
