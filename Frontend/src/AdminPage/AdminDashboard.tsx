@@ -4,14 +4,12 @@ import {
   Users,
   Package,
   BarChart3,
-  Settings,
   ShieldCheck,
   Activity,
   Database,
   Server,
   Cloud,
   AlertCircle,
-  LucideIcon,
 } from "lucide-react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
@@ -23,12 +21,11 @@ const AdminDashboard: React.FC = () => {
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-100 via-gray-100 to-slate-200 flex flex-col">
       <Header />
 
-      {/* MAIN CONTENT */}
       <main className="flex-1 w-full px-6 py-10">
         <div className="max-w-7xl mx-auto space-y-10">
           {/* Hero Section */}
           <div className="relative overflow-hidden bg-gradient-to-r from-gray-900 to-gray-700 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500 hover:scale-[1.02]">
-            <div className="absolute right-10 top-10 opacity-10 text-[120px]">
+            <div className="absolute right-10 top-10 opacity-10">
               <ShieldCheck size={120} />
             </div>
 
@@ -167,7 +164,7 @@ const AdminDashboard: React.FC = () => {
 interface QuickStatProps {
   label: string;
   value: string;
-  Icon: LucideIcon;
+  Icon: React.ElementType;
   color: string;
 }
 
@@ -186,7 +183,7 @@ const QuickStat: React.FC<QuickStatProps> = ({ label, value, Icon, color }) => (
 interface AdminCardProps {
   title: string;
   value: string;
-  Icon: LucideIcon;
+  Icon: React.ElementType;
   gradient: string;
 }
 
@@ -213,7 +210,7 @@ const AdminCard: React.FC<AdminCardProps> = ({
 interface DashboardCellProps {
   title: string;
   desc: string;
-  Icon: LucideIcon;
+  Icon: React.ElementType;
   link: string;
   gradient: string;
 }
@@ -247,7 +244,7 @@ const DashboardCell: React.FC<DashboardCellProps> = ({
 );
 
 interface HealthItemProps {
-  Icon: LucideIcon;
+  Icon: React.ElementType;
   label: string;
   status: string;
   color: "green" | "blue" | "red" | "yellow";
