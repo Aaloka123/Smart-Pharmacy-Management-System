@@ -16,14 +16,14 @@ const StockCard = ({
   gradient: string;
   icon: React.ReactNode;
 }) => (
-  <div className="group relative bg-white/80 backdrop-blur-md rounded-3xl p-6 shadow-xl overflow-hidden transition-all duration-500 hover:scale-[1.05] hover:shadow-2xl">
+  <div className="group relative bg-white/80 backdrop-blur-md rounded-3xl p-6 shadow-xl overflow-hidden transition-all duration-500 hover:scale-[1.06] hover:-translate-y-3 hover:shadow-2xl cursor-pointer">
     <div
       className={`absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br ${gradient} opacity-20 rounded-full blur-2xl transition-all duration-500 group-hover:opacity-40`}
     />
     <p className="text-gray-500 text-sm">{title}</p>
     <h2 className="text-3xl font-bold mt-1">{value}</h2>
     <div
-      className={`mt-5 w-14 h-14 rounded-2xl flex items-center justify-center text-white bg-gradient-to-r ${gradient} transition-transform duration-500 group-hover:rotate-12`}
+      className={`mt-5 w-14 h-14 rounded-2xl flex items-center justify-center text-white bg-gradient-to-r ${gradient} transition-all duration-500 group-hover:rotate-12 group-hover:scale-110 shadow-lg`}
     >
       {icon}
     </div>
@@ -52,7 +52,7 @@ const ManagerInventory: React.FC = () => {
 
       <main className="flex-grow max-w-7xl mx-auto w-full p-6 space-y-12">
         {/* Hero Section */}
-        <div className="relative bg-gradient-to-r from-green-700 to-emerald-700 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500 hover:scale-[1.02]">
+        <div className="relative bg-gradient-to-r from-green-700 to-emerald-700 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:shadow-green-500/40">
           <div className="absolute right-10 top-10 opacity-10 text-[140px]">
             <Package />
           </div>
@@ -62,11 +62,6 @@ const ManagerInventory: React.FC = () => {
             <p className="opacity-90 mt-3 text-lg">
               Monitor stock levels and manage medicines efficiently.
             </p>
-
-            {/* NEW: Last Updated Badge */}
-            <div className="mt-4 inline-block bg-white/20 px-4 py-1 rounded-full text-sm backdrop-blur-md">
-              Last Updated: Today
-            </div>
           </div>
         </div>
 
@@ -94,14 +89,15 @@ const ManagerInventory: React.FC = () => {
 
         {/* Inventory Table */}
         <div className="bg-white rounded-3xl shadow-2xl p-8 transition-all duration-500 hover:shadow-3xl">
-          {/* Header + Search + NEW Button */}
+          {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             <h2 className="text-2xl font-semibold tracking-wide">
               Medicine Inventory
             </h2>
 
             <div className="flex gap-4 items-center">
-              <div className="flex items-center gap-2 border rounded-xl px-4 py-2 transition focus-within:ring-2 focus-within:ring-green-500">
+              {/* Search Hover Glow */}
+              <div className="flex items-center gap-2 border rounded-xl px-4 py-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-green-500 hover:shadow-md hover:scale-105">
                 <Search size={18} className="text-gray-400" />
                 <input
                   type="text"
@@ -112,8 +108,8 @@ const ManagerInventory: React.FC = () => {
                 />
               </div>
 
-              {/* NEW: Add Medicine Button */}
-              <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition shadow-md hover:shadow-lg">
+              {/* Add Button Hover */}
+              <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl transition-all duration-300 hover:bg-green-700 hover:scale-110 hover:shadow-lg active:scale-95">
                 <Plus size={18} />
                 Add
               </button>
@@ -135,23 +131,13 @@ const ManagerInventory: React.FC = () => {
                 {filtered.map((med, i) => (
                   <tr
                     key={i}
-                    className="even:bg-gray-50 hover:bg-green-50 border-b hover:border-green-200 transition-all duration-300"
+                    className="even:bg-gray-50 hover:bg-green-50 hover:scale-[1.01] hover:shadow-md transition-all duration-300 cursor-pointer"
                   >
-                    {/* NEW: underline hover */}
-                    <td className="p-4 font-medium hover:underline cursor-pointer">
+                    <td className="p-4 font-medium hover:text-green-700 transition">
                       {med.name}
                     </td>
 
-                    {/* NEW: stock color logic */}
-                    <td
-                      className={`p-4 text-center font-semibold ${
-                        med.stock < 10
-                          ? "text-red-600"
-                          : med.stock < 30
-                            ? "text-orange-500"
-                            : "text-green-600"
-                      }`}
-                    >
+                    <td className="p-4 text-center font-semibold">
                       {med.stock}
                     </td>
 
@@ -161,7 +147,7 @@ const ManagerInventory: React.FC = () => {
 
                     <td className="p-4 text-center">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm transition-all duration-300 hover:scale-110 ${
                           med.status === "In Stock"
                             ? "bg-green-100 text-green-700"
                             : med.status === "Low Stock"
