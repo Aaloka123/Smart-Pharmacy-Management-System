@@ -10,21 +10,20 @@ import {
   Server,
   Cloud,
   AlertCircle,
+  TrendingUp,
 } from "lucide-react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
-
-/* ================= MAIN DASHBOARD ================= */
 
 const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-100 via-gray-100 to-slate-200 flex flex-col">
       <Header />
 
-      <main className="flex-1 w-full px-6 py-10">
-        <div className="max-w-7xl mx-auto space-y-10">
+      <main className="flex-1 w-full px-6 py-12">
+        <div className="max-w-7xl mx-auto space-y-12">
           {/* Hero Section */}
-          <div className="relative overflow-hidden bg-gradient-to-r from-gray-900 to-gray-700 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500 hover:scale-[1.02]">
+          <div className="relative overflow-hidden bg-gradient-to-r from-gray-900 to-gray-700 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500 hover:scale-[1.01] border border-gray-800">
             <div className="absolute right-10 top-10 opacity-10">
               <ShieldCheck size={120} />
             </div>
@@ -33,34 +32,39 @@ const AdminDashboard: React.FC = () => {
               <ShieldCheck className="text-green-400 animate-pulse" />
               Admin Control Panel
             </h1>
-            <p className="opacity-80 mt-2">
-              System-level management & monitoring dashboard
+            <p className="opacity-80 mt-3 max-w-xl">
+              Monitor, manage and control your entire pharmacy system with
+              real-time insights and analytics.
             </p>
           </div>
 
           {/* Quick Stats */}
+          <SectionHeader title="Quick Overview" />
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <QuickStat
               label="Pending Approvals"
               value="5"
               Icon={AlertCircle}
-              color="bg-yellow-100 text-yellow-700"
+              color="yellow"
             />
             <QuickStat
               label="Active Staff"
               value="12"
               Icon={Users}
-              color="bg-blue-100 text-blue-700"
+              color="blue"
             />
             <QuickStat
               label="System Alerts"
               value="3"
               Icon={AlertCircle}
-              color="bg-red-100 text-red-700"
+              color="red"
             />
           </div>
 
           {/* KPI Cards */}
+          <SectionHeader title="Key Performance Indicators" />
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <AdminCard
               title="Total Users"
@@ -89,47 +93,43 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Quick Navigation */}
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">Quick Navigation</h2>
+          <SectionHeader title="Quick Navigation" />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <DashboardCell
-                title="Add Medicine"
-                desc="Create new medicine entry"
-                Icon={Package}
-                link="/admin/add-medicine"
-                gradient="from-green-500 to-emerald-600"
-              />
-
-              <DashboardCell
-                title="View Reports"
-                desc="Check sales & analytics"
-                Icon={BarChart3}
-                link="/admin/reports"
-                gradient="from-purple-500 to-indigo-600"
-              />
-
-              <DashboardCell
-                title="Manage Inventory"
-                desc="Stock control system"
-                Icon={Database}
-                link="/admin/inventory"
-                gradient="from-blue-500 to-cyan-600"
-              />
-
-              <DashboardCell
-                title="System Monitoring"
-                desc="Server & logs overview"
-                Icon={Server}
-                link="/admin/monitoring"
-                gradient="from-red-500 to-rose-600"
-              />
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <DashboardCell
+              title="Add Medicine"
+              desc="Create new medicine entry"
+              Icon={Package}
+              link="/admin/add-medicine"
+              gradient="from-green-500 to-emerald-600"
+            />
+            <DashboardCell
+              title="View Reports"
+              desc="Check sales & analytics"
+              Icon={BarChart3}
+              link="/admin/reports"
+              gradient="from-purple-500 to-indigo-600"
+            />
+            <DashboardCell
+              title="Manage Inventory"
+              desc="Stock control system"
+              Icon={Database}
+              link="/admin/inventory"
+              gradient="from-blue-500 to-cyan-600"
+            />
+            <DashboardCell
+              title="System Monitoring"
+              desc="Server & logs overview"
+              Icon={Server}
+              link="/admin/monitoring"
+              gradient="from-red-500 to-rose-600"
+            />
           </div>
 
           {/* System Health */}
-          <div className="bg-white rounded-3xl shadow-xl p-6">
-            <h2 className="text-xl font-semibold mb-4">System Health</h2>
+          <SectionHeader title="System Health" />
+
+          <div className="bg-white rounded-3xl shadow-xl p-6 border border-gray-200">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <HealthItem
                 Icon={Database}
@@ -159,108 +159,87 @@ const AdminDashboard: React.FC = () => {
   );
 };
 
-/* ================= COMPONENTS ================= */
+/* ---------- Section Header ---------- */
 
-interface QuickStatProps {
-  label: string;
-  value: string;
-  Icon: React.ElementType;
-  color: string;
-}
-
-const QuickStat: React.FC<QuickStatProps> = ({ label, value, Icon, color }) => (
-  <div
-    className={`flex items-center justify-between rounded-2xl p-4 shadow bg-white ${color} transition hover:scale-105 hover:shadow-xl`}
-  >
-    <div>
-      <p className="text-sm font-medium">{label}</p>
-      <h2 className="text-2xl font-bold">{value}</h2>
-    </div>
-    <Icon className="text-3xl opacity-70" />
-  </div>
+const SectionHeader = ({ title }: { title: string }) => (
+  <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
 );
 
-interface AdminCardProps {
-  title: string;
-  value: string;
-  Icon: React.ElementType;
-  gradient: string;
-}
+/* ---------- QuickStat ---------- */
 
-const AdminCard: React.FC<AdminCardProps> = ({
-  title,
-  value,
-  Icon,
-  gradient,
-}) => (
-  <div className="relative bg-white rounded-3xl p-6 shadow-lg overflow-hidden transition hover:scale-105 hover:shadow-2xl">
+const QuickStat = ({ label, value, Icon, color }: any) => {
+  const colorMap: any = {
+    yellow: "bg-yellow-100 text-yellow-700",
+    blue: "bg-blue-100 text-blue-700",
+    red: "bg-red-100 text-red-700",
+  };
+
+  return (
+    <div
+      className={`flex items-center justify-between rounded-2xl p-5 shadow bg-white border border-gray-200 transition duration-300 hover:scale-105 hover:shadow-xl`}
+    >
+      <div>
+        <p className="text-sm font-medium text-gray-500">{label}</p>
+        <h2 className="text-2xl font-bold flex items-center gap-2">
+          {value}
+          <TrendingUp size={16} className="text-green-500" />
+        </h2>
+      </div>
+      <div className={`p-3 rounded-xl ${colorMap[color]}`}>
+        <Icon size={22} />
+      </div>
+    </div>
+  );
+};
+
+/* ---------- AdminCard ---------- */
+
+const AdminCard = ({ title, value, Icon, gradient }: any) => (
+  <div className="relative bg-white rounded-3xl p-6 shadow-lg overflow-hidden transition duration-300 hover:scale-105 hover:shadow-2xl border border-gray-200">
     <div
       className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradient} opacity-20 rounded-bl-full`}
     />
     <p className="text-gray-500 text-sm">{title}</p>
     <h2 className="text-3xl font-bold mt-1">{value}</h2>
+
     <div
-      className={`mt-4 w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-to-r ${gradient}`}
+      className={`mt-4 w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-to-r ${gradient} transition-transform duration-300 hover:rotate-12`}
     >
       <Icon size={20} />
     </div>
   </div>
 );
 
-interface DashboardCellProps {
-  title: string;
-  desc: string;
-  Icon: React.ElementType;
-  link: string;
-  gradient: string;
-}
+/* ---------- DashboardCell ---------- */
 
-const DashboardCell: React.FC<DashboardCellProps> = ({
-  title,
-  desc,
-  Icon,
-  link,
-  gradient,
-}) => (
+const DashboardCell = ({ title, desc, Icon, link, gradient }: any) => (
   <Link
     to={link}
-    className="group relative bg-white rounded-3xl p-6 shadow-lg overflow-hidden transition-all duration-500 hover:scale-105 hover:-translate-y-2 hover:shadow-2xl"
+    className="group relative bg-white rounded-3xl p-6 shadow-lg overflow-hidden transition-all duration-500 hover:scale-105 hover:-translate-y-2 hover:shadow-2xl border border-gray-200"
   >
     <div
       className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-10 transition duration-500`}
     />
-
     <div className="relative z-10 flex flex-col gap-3">
       <div
         className={`w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-r ${gradient} text-white transition group-hover:rotate-12 group-hover:scale-110`}
       >
         <Icon size={22} />
       </div>
-
       <h3 className="text-lg font-semibold">{title}</h3>
       <p className="text-sm text-gray-500">{desc}</p>
     </div>
   </Link>
 );
 
-interface HealthItemProps {
-  Icon: React.ElementType;
-  label: string;
-  status: string;
-  color: "green" | "blue" | "red" | "yellow";
-}
+/* ---------- HealthItem ---------- */
 
-const HealthItem: React.FC<HealthItemProps> = ({
-  Icon,
-  label,
-  status,
-  color,
-}) => {
-  const colorMap = {
-    green: "bg-green-100 text-green-700",
-    blue: "bg-blue-100 text-blue-700",
-    red: "bg-red-100 text-red-700",
-    yellow: "bg-yellow-100 text-yellow-700",
+const HealthItem = ({ Icon, label, status, color }: any) => {
+  const colorMap: any = {
+    green: "bg-green-500",
+    blue: "bg-blue-500",
+    red: "bg-red-500",
+    yellow: "bg-yellow-500",
   };
 
   return (
@@ -271,11 +250,10 @@ const HealthItem: React.FC<HealthItemProps> = ({
         </div>
         <p className="font-medium">{label}</p>
       </div>
-      <span
-        className={`px-3 py-1 rounded-full text-xs font-semibold ${colorMap[color]}`}
-      >
-        {status}
-      </span>
+      <div className="flex items-center gap-2">
+        <span className={`w-2 h-2 rounded-full ${colorMap[color]}`} />
+        <span className="text-sm font-semibold text-gray-600">{status}</span>
+      </div>
     </div>
   );
 };
