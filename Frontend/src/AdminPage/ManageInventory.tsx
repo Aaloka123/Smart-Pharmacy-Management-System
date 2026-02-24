@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
 import { Package, AlertTriangle, Search, Plus } from "lucide-react";
@@ -16,7 +16,7 @@ const StockCard = ({
   gradient: string;
   icon: React.ReactNode;
 }) => (
-  <div className="group relative bg-white/80 backdrop-blur-md rounded-3xl p-6 shadow-xl overflow-hidden transition-all duration-500 hover:scale-[1.06] hover:-translate-y-3 hover:shadow-2xl cursor-pointer">
+  <div className="group relative bg-white/80 backdrop-blur-md rounded-3xl p-6 shadow-xl overflow-hidden transition-all duration-500 hover:scale-[1.05] hover:-translate-y-2 hover:shadow-2xl cursor-pointer border border-gray-200">
     <div
       className={`absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br ${gradient} opacity-20 rounded-full blur-2xl transition-all duration-500 group-hover:opacity-40`}
     />
@@ -36,15 +36,24 @@ const ManagerInventory: React.FC = () => {
   const [search, setSearch] = useState("");
 
   const medicines = [
-    { name: "Paracetamol", stock: 120, price: "Rs 50", status: "In Stock" },
-    { name: "Amoxicillin", stock: 25, price: "Rs 150", status: "Low Stock" },
-    { name: "Vitamin C", stock: 200, price: "Rs 30", status: "In Stock" },
-    { name: "Insulin", stock: 5, price: "Rs 500", status: "Critical" },
+    { name: "Paracetamol", stock: 120, price: "Rs 50" },
+    { name: "Amoxicillin", stock: 25, price: "Rs 150" },
+    { name: "Vitamin C", stock: 200, price: "Rs 30" },
+    { name: "Insulin", stock: 5, price: "Rs 500" },
   ];
 
-  const filtered = medicines.filter((med) =>
-    med.name.toLowerCase().includes(search.toLowerCase()),
-  );
+  /* 🔥 Dynamic Status Logic */
+  const getStatus = (stock: number) => {
+    if (stock <= 5) return "Critical";
+    if (stock <= 30) return "Low Stock";
+    return "In Stock";
+  };
+
+  const filtered = useMemo(() => {
+    return medicines.filter((med) =>
+      med.name.toLowerCase().includes(search.toLowerCase()),
+    );
+  }, [search]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-100 via-gray-100 to-slate-200">
@@ -52,7 +61,7 @@ const ManagerInventory: React.FC = () => {
 
       <main className="flex-grow max-w-7xl mx-auto w-full p-6 space-y-12">
         {/* Hero Section */}
-        <div className="relative bg-gradient-to-r from-green-700 to-emerald-700 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:shadow-green-500/40">
+        <div className="relative bg-gradient-to-r from-green-700 to-emerald-700 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500 hover:scale-[1.01]">
           <div className="absolute right-10 top-10 opacity-10 text-[140px]">
             <Package />
           </div>
@@ -88,28 +97,26 @@ const ManagerInventory: React.FC = () => {
         </div>
 
         {/* Inventory Table */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 transition-all duration-500 hover:shadow-3xl">
-          {/* Header */}
+        <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-200 transition">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             <h2 className="text-2xl font-semibold tracking-wide">
               Medicine Inventory
             </h2>
 
             <div className="flex gap-4 items-center">
-              {/* Search Hover Glow */}
-              <div className="flex items-center gap-2 border rounded-xl px-4 py-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-green-500 hover:shadow-md hover:scale-105">
+              {/* Search */}
+              <div className="flex items-center gap-2 border rounded-xl px-4 py-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-green-500 hover:shadow-md">
                 <Search size={18} className="text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search medicine..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="outline-none bg-transparent"
+                  className="outline-none bg-transparent text-sm"
                 />
               </div>
 
-              {/* Add Button Hover */}
-              <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl transition-all duration-300 hover:bg-green-700 hover:scale-110 hover:shadow-lg active:scale-95">
+              <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl transition-all duration-300 hover:bg-green-700 hover:scale-105 active:scale-95 shadow-md">
                 <Plus size={18} />
                 Add
               </button>
@@ -128,38 +135,57 @@ const ManagerInventory: React.FC = () => {
               </thead>
 
               <tbody>
-                {filtered.map((med, i) => (
-                  <tr
-                    key={i}
-                    className="even:bg-gray-50 hover:bg-green-50 hover:scale-[1.01] hover:shadow-md transition-all duration-300 cursor-pointer"
-                  >
-                    <td className="p-4 font-medium hover:text-green-700 transition">
-                      {med.name}
-                    </td>
+                {filtered.length > 0 ? (
+                  filtered.map((med, i) => {
+                    const status = getStatus(med.stock);
 
-                    <td className="p-4 text-center font-semibold">
-                      {med.stock}
-                    </td>
-
-                    <td className="p-4 text-right font-semibold">
-                      {med.price}
-                    </td>
-
-                    <td className="p-4 text-center">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm transition-all duration-300 hover:scale-110 ${
-                          med.status === "In Stock"
-                            ? "bg-green-100 text-green-700"
-                            : med.status === "Low Stock"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-red-100 text-red-700"
-                        }`}
+                    return (
+                      <tr
+                        key={i}
+                        className="even:bg-gray-50 hover:bg-green-50 transition-all duration-300 hover:shadow-sm"
                       >
-                        {med.status}
-                      </span>
+                        <td className="p-4 font-medium">{med.name}</td>
+
+                        <td className="p-4 text-center font-semibold">
+                          {med.stock}
+                        </td>
+
+                        <td className="p-4 text-right font-semibold">
+                          {med.price}
+                        </td>
+
+                        <td className="p-4 text-center">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center justify-center gap-2 w-fit mx-auto ${
+                              status === "In Stock"
+                                ? "bg-green-100 text-green-700"
+                                : status === "Low Stock"
+                                  ? "bg-yellow-100 text-yellow-700"
+                                  : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            <span
+                              className={`w-2 h-2 rounded-full ${
+                                status === "In Stock"
+                                  ? "bg-green-500"
+                                  : status === "Low Stock"
+                                    ? "bg-yellow-500"
+                                    : "bg-red-500"
+                              }`}
+                            />
+                            {status}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="text-center py-8 text-gray-500">
+                      No medicines found.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
