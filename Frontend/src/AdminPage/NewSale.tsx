@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Printer } from "lucide-react";
 
 interface Item {
   name: string;
@@ -18,15 +18,16 @@ const medicineData: { name: string; price: number }[] = [
 const NewSale: React.FC = () => {
   const [customer, setCustomer] = useState("");
   const [email, setEmail] = useState("");
+  const [discountEnabled, setDiscountEnabled] = useState(false);
   const [items, setItems] = useState<Item[]>([
     { name: "", price: 0, quantity: 1 },
   ]);
 
-  // Stable invoice number
-  const invoiceNumber = useMemo(
-    () => `INV-${Math.floor(1000 + Math.random() * 9000)}`,
-    [],
-  );
+  // Better invoice number (includes year)
+  const invoiceNumber = useMemo(() => {
+    const year = new Date().getFullYear();
+    return `INV-${year}-${Math.floor(1000 + Math.random() * 9000)}`;
+  }, []);
 
   const today = new Date().toLocaleDateString();
 
@@ -42,7 +43,7 @@ const NewSale: React.FC = () => {
       updated[index] = {
         ...updated[index],
         name: value as string,
-        price: selectedMed ? selectedMed.price : 0, // auto-fill price
+        price: selectedMed ? selectedMed.price : 0,
       };
     } else {
       updated[index] = {
@@ -69,20 +70,33 @@ const NewSale: React.FC = () => {
   );
 
   const tax = subtotal * 0.13;
-  const total = subtotal + tax;
+  const discount = discountEnabled ? subtotal * 0.05 : 0;
+  const total = subtotal + tax - discount;
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const clearInvoice = () => {
     setCustomer("");
     setEmail("");
+    setDiscountEnabled(false);
     setItems([{ name: "", price: 0, quantity: 1 }]);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Invoice Created Successfully!");
+
+    const hasValidItem = items.some((item) => item.name !== "");
+    if (!hasValidItem) {
+      alert("Please select at least one medicine.");
+      return;
+    }
+
+    alert("Invoice Generated Successfully!");
     clearInvoice();
+  };
+
+  const handlePrint = () => {
+    window.print();
   };
 
   return (
@@ -108,8 +122,7 @@ const NewSale: React.FC = () => {
               value={customer}
               onChange={(e) => setCustomer(e.target.value)}
               required
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
-              placeholder="Enter customer name"
+              className="w-full p-3 border rounded-xl"
             />
           </div>
 
@@ -122,9 +135,18 @@ const NewSale: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
-              placeholder="Enter customer email"
+              className="w-full p-3 border rounded-xl"
             />
+          </div>
+
+          {/* Discount Toggle */}
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={discountEnabled}
+              onChange={() => setDiscountEnabled(!discountEnabled)}
+            />
+            <span className="text-sm font-medium">Apply 5% Discount</span>
           </div>
 
           {/* Items */}
@@ -164,14 +186,7 @@ const NewSale: React.FC = () => {
                       </select>
                     </td>
 
-                    <td className="p-3">
-                      <input
-                        type="number"
-                        value={item.price}
-                        readOnly
-                        className="w-full p-2 border rounded-lg bg-gray-100"
-                      />
-                    </td>
+                    <td className="p-3 bg-gray-100">Rs {item.price}</td>
 
                     <td className="p-3">
                       <input
@@ -208,7 +223,7 @@ const NewSale: React.FC = () => {
             <button
               type="button"
               onClick={addItem}
-              className="mt-4 flex items-center gap-2 text-green-600 font-medium hover:text-green-800 transition"
+              className="mt-4 flex items-center gap-2 text-green-600 font-medium"
             >
               <Plus size={18} /> Add Item
             </button>
@@ -224,26 +239,33 @@ const NewSale: React.FC = () => {
               <span>VAT (13%)</span>
               <span>Rs {tax.toFixed(2)}</span>
             </div>
+            {discountEnabled && (
+              <div className="flex justify-between text-red-600">
+                <span>Discount (5%)</span>
+                <span>- Rs {discount.toFixed(2)}</span>
+              </div>
+            )}
             <div className="flex justify-between text-xl font-bold text-green-700 border-t pt-3">
-              <span>Grand Total</span>
+              <span>Net Total</span>
               <span>Rs {total.toFixed(2)}</span>
             </div>
           </div>
 
+          {/* Buttons */}
           <div className="flex gap-4">
             <button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-green-600 to-emerald-700 text-white py-3 rounded-xl font-semibold hover:scale-105 transition"
+              className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition"
             >
               Generate Invoice
             </button>
 
             <button
               type="button"
-              onClick={clearInvoice}
-              className="flex-1 bg-gray-300 text-gray-800 py-3 rounded-xl font-semibold hover:bg-gray-400 transition"
+              onClick={handlePrint}
+              className="flex-1 bg-gray-300 py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
             >
-              Clear
+              <Printer size={18} /> Print
             </button>
           </div>
         </form>
