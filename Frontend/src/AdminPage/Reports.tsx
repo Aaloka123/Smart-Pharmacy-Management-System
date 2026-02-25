@@ -7,12 +7,30 @@ import Footer from "../UserComponent/Footer";
 const Reports: React.FC = () => {
   const [filter, setFilter] = useState("This Month");
 
-  const reportData = {
-    monthlySales: "Rs 2,45,000",
-    todayRevenue: "Rs 12,450",
-    transactions: "158",
-    growth: "+12%",
-  };
+  // Simulated dynamic data
+  const reportData =
+    filter === "This Week"
+      ? {
+          sales: 75000,
+          revenue: 8450,
+          transactions: 42,
+          growth: 8,
+        }
+      : filter === "This Year"
+        ? {
+            sales: 1245000,
+            revenue: 98450,
+            transactions: 1580,
+            growth: 18,
+          }
+        : {
+            sales: 245000,
+            revenue: 12450,
+            transactions: 158,
+            growth: 12,
+          };
+
+  const lastUpdated = new Date().toLocaleString();
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-100 to-gray-200">
@@ -38,9 +56,11 @@ const Reports: React.FC = () => {
             <p className="opacity-80 mt-2">
               Monitor sales performance and analytics insights
             </p>
+            <p className="text-xs opacity-70 mt-2">
+              Last Updated: {lastUpdated}
+            </p>
           </div>
 
-          {/* Filter Dropdown */}
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -52,26 +72,35 @@ const Reports: React.FC = () => {
           </select>
         </div>
 
+        {/* Quick Summary Bar */}
+        <div className="bg-white rounded-2xl p-4 shadow flex justify-between text-sm font-medium">
+          <span>Total Sales: Rs {reportData.sales.toLocaleString()}</span>
+          <span>Transactions: {reportData.transactions}</span>
+          <span className="text-green-600">Growth: +{reportData.growth}%</span>
+        </div>
+
         {/* Report Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <ReportCard
-            title="Monthly Sales"
-            value={reportData.monthlySales}
-            extra={reportData.growth}
+            title="Total Sales"
+            value={`Rs ${reportData.sales.toLocaleString()}`}
+            progress={reportData.growth}
             icon={<TrendingUp />}
             gradient="from-green-500 to-emerald-600"
           />
 
           <ReportCard
             title="Today's Revenue"
-            value={reportData.todayRevenue}
+            value={`Rs ${reportData.revenue.toLocaleString()}`}
+            progress={70}
             icon={<Calendar />}
             gradient="from-blue-500 to-cyan-600"
           />
 
           <ReportCard
-            title="Total Transactions"
-            value={reportData.transactions}
+            title="Transactions"
+            value={reportData.transactions.toString()}
+            progress={60}
             icon={<BarChart3 />}
             gradient="from-purple-500 to-indigo-600"
           />
@@ -84,7 +113,7 @@ const Reports: React.FC = () => {
           </h2>
 
           <div className="h-64 flex items-center justify-center text-gray-400 border-2 border-dashed rounded-2xl">
-            Chart Visualization Coming Soon...
+            Interactive Chart Coming Soon...
           </div>
         </div>
       </main>
@@ -94,14 +123,14 @@ const Reports: React.FC = () => {
   );
 };
 
-/* ---------- Report Card Component ---------- */
+/* ---------- Report Card ---------- */
 
 interface ReportCardProps {
   title: string;
   value: string;
   icon: React.ReactNode;
   gradient: string;
-  extra?: string;
+  progress: number;
 }
 
 const ReportCard: React.FC<ReportCardProps> = ({
@@ -109,18 +138,22 @@ const ReportCard: React.FC<ReportCardProps> = ({
   value,
   icon,
   gradient,
-  extra,
+  progress,
 }) => (
-  <div className="relative bg-white rounded-3xl p-6 shadow-lg overflow-hidden transition hover:scale-105 hover:shadow-2xl">
+  <div className="relative bg-white rounded-3xl p-6 shadow-lg overflow-hidden transition hover:scale-105 hover:shadow-2xl hover:ring-2 hover:ring-purple-400">
     <div
       className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradient} opacity-20 rounded-bl-full`}
     />
     <p className="text-gray-500 text-sm">{title}</p>
     <h2 className="text-3xl font-bold mt-1">{value}</h2>
 
-    {extra && (
-      <p className="text-green-600 text-sm mt-1 font-medium">{extra} Growth</p>
-    )}
+    {/* Progress Bar */}
+    <div className="mt-4 h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div
+        className={`h-full bg-gradient-to-r ${gradient} transition-all duration-700`}
+        style={{ width: `${progress}%` }}
+      />
+    </div>
 
     <div
       className={`mt-4 w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-to-r ${gradient}`}
