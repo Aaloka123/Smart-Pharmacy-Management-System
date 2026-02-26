@@ -5,42 +5,52 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
+
+  const validateEmail = (email: string) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
 
     if (!email || !password) {
-      alert("Please fill in all fields");
+      setError("All fields are required.");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
       return;
     }
 
     setLoading(true);
 
-    // Simulate API call
+    // Simulated API call
     setTimeout(() => {
-      console.log("Email:", email);
-      console.log("Password:", password);
-      alert("Login submitted successfully!");
       setLoading(false);
+      setSuccess("Login successful!");
+      setEmail("");
+      setPassword("");
     }, 1000);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-      <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-700">
-          Login
+          Welcome Back 👋
         </h2>
 
         <form onSubmit={handleLogin} className="space-y-4">
           {/* Email */}
           <div>
-            <label className="block mb-1 font-medium" htmlFor="email">
-              Email
-            </label>
+            <label className="block mb-1 font-medium">Email</label>
             <input
               type="email"
-              id="email"
               placeholder="Enter your email"
               value={email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -52,13 +62,10 @@ const Login: React.FC = () => {
 
           {/* Password */}
           <div>
-            <label className="block mb-1 font-medium" htmlFor="password">
-              Password
-            </label>
+            <label className="block mb-1 font-medium">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                id="password"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -76,14 +83,22 @@ const Login: React.FC = () => {
             </div>
           </div>
 
+          {/* Error Message */}
+          {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+
+          {/* Success Message */}
+          {success && (
+            <p className="text-green-600 text-sm font-medium">{success}</p>
+          )}
+
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading || !email || !password}
-            className={`w-full py-2 rounded-md text-white transition duration-200 ${
-              loading || !email || !password
+            disabled={loading}
+            className={`w-full py-2 rounded-md text-white font-medium transition duration-300 transform ${
+              loading
                 ? "bg-blue-300 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600"
+                : "bg-blue-500 hover:bg-blue-600 hover:scale-105"
             }`}
           >
             {loading ? "Logging in..." : "Login"}
