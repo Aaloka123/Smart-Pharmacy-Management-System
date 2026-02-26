@@ -1,36 +1,39 @@
 import React, { useState } from "react";
-import { BarChart3, TrendingUp, Calendar, ArrowLeft } from "lucide-react";
+import {
+  BarChart3,
+  TrendingUp,
+  Calendar,
+  ArrowLeft,
+  Download,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
 
-const Reports: React.FC = () => {
-  const [filter, setFilter] = useState("This Month");
+type FilterType = "This Week" | "This Month" | "This Year";
 
-  // Simulated dynamic data
+const Reports: React.FC = () => {
+  const [filter, setFilter] = useState<FilterType>("This Month");
+  const [fade, setFade] = useState(false);
+
+  const handleFilterChange = (value: FilterType) => {
+    setFade(true);
+    setTimeout(() => {
+      setFilter(value);
+      setFade(false);
+    }, 200);
+  };
+
   const reportData =
     filter === "This Week"
-      ? {
-          sales: 75000,
-          revenue: 8450,
-          transactions: 42,
-          growth: 8,
-        }
+      ? { sales: 75000, revenue: 8450, transactions: 42, growth: 8 }
       : filter === "This Year"
-        ? {
-            sales: 1245000,
-            revenue: 98450,
-            transactions: 1580,
-            growth: 18,
-          }
-        : {
-            sales: 245000,
-            revenue: 12450,
-            transactions: 158,
-            growth: 12,
-          };
+        ? { sales: 1245000, revenue: 98450, transactions: 1580, growth: 18 }
+        : { sales: 245000, revenue: 12450, transactions: 158, growth: 12 };
 
   const lastUpdated = new Date().toLocaleString();
+
+  const growthColor = reportData.growth > 0 ? "text-green-600" : "text-red-500";
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-100 to-gray-200">
@@ -47,7 +50,7 @@ const Reports: React.FC = () => {
         </Link>
 
         {/* Page Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-indigo-700 text-white rounded-3xl p-8 shadow-xl flex justify-between items-center">
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-700 text-white rounded-3xl p-8 shadow-xl flex flex-col md:flex-row justify-between md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-3">
               <BarChart3 />
@@ -61,26 +64,40 @@ const Reports: React.FC = () => {
             </p>
           </div>
 
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="bg-white text-gray-700 px-4 py-2 rounded-xl shadow-md"
-          >
-            <option>This Week</option>
-            <option>This Month</option>
-            <option>This Year</option>
-          </select>
+          <div className="flex gap-3">
+            <select
+              value={filter}
+              onChange={(e) => handleFilterChange(e.target.value as FilterType)}
+              className="bg-white text-gray-700 px-4 py-2 rounded-xl shadow-md focus:ring-2 focus:ring-purple-400 outline-none"
+            >
+              <option>This Week</option>
+              <option>This Month</option>
+              <option>This Year</option>
+            </select>
+
+            <button className="flex items-center gap-2 bg-white text-purple-700 px-4 py-2 rounded-xl shadow hover:bg-gray-100 transition">
+              <Download size={16} />
+              Export
+            </button>
+          </div>
         </div>
 
-        {/* Quick Summary Bar */}
+        {/* Summary */}
         <div className="bg-white rounded-2xl p-4 shadow flex justify-between text-sm font-medium">
           <span>Total Sales: Rs {reportData.sales.toLocaleString()}</span>
           <span>Transactions: {reportData.transactions}</span>
-          <span className="text-green-600">Growth: +{reportData.growth}%</span>
+          <span className={growthColor}>
+            Growth: {reportData.growth > 0 ? "+" : ""}
+            {reportData.growth}%
+          </span>
         </div>
 
-        {/* Report Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Cards */}
+        <div
+          className={`grid grid-cols-1 md:grid-cols-3 gap-6 transition-opacity duration-300 ${
+            fade ? "opacity-0" : "opacity-100"
+          }`}
+        >
           <ReportCard
             title="Total Sales"
             value={`Rs ${reportData.sales.toLocaleString()}`}
@@ -90,7 +107,7 @@ const Reports: React.FC = () => {
           />
 
           <ReportCard
-            title="Today's Revenue"
+            title="Revenue"
             value={`Rs ${reportData.revenue.toLocaleString()}`}
             progress={70}
             icon={<Calendar />}
@@ -106,13 +123,13 @@ const Reports: React.FC = () => {
           />
         </div>
 
-        {/* Chart Placeholder */}
+        {/* Chart Section */}
         <div className="bg-white rounded-3xl shadow-xl p-8">
           <h2 className="text-xl font-semibold mb-4">
             Sales Performance Chart ({filter})
           </h2>
 
-          <div className="h-64 flex items-center justify-center text-gray-400 border-2 border-dashed rounded-2xl">
+          <div className="h-64 flex items-center justify-center text-gray-400 border-2 border-dashed rounded-2xl hover:bg-gray-50 transition">
             Interactive Chart Coming Soon...
           </div>
         </div>
@@ -147,7 +164,6 @@ const ReportCard: React.FC<ReportCardProps> = ({
     <p className="text-gray-500 text-sm">{title}</p>
     <h2 className="text-3xl font-bold mt-1">{value}</h2>
 
-    {/* Progress Bar */}
     <div className="mt-4 h-2 bg-gray-200 rounded-full overflow-hidden">
       <div
         className={`h-full bg-gradient-to-r ${gradient} transition-all duration-700`}
