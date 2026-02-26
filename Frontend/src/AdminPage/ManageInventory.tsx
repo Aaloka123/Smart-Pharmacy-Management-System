@@ -1,7 +1,13 @@
 import React, { useState, useMemo } from "react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
-import { Package, AlertTriangle, Search, Plus } from "lucide-react";
+import {
+  Package,
+  AlertTriangle,
+  Search,
+  Plus,
+  ArrowUpDown,
+} from "lucide-react";
 
 /* ---------- Stock Card ---------- */
 
@@ -34,6 +40,7 @@ const StockCard = ({
 
 const ManagerInventory: React.FC = () => {
   const [search, setSearch] = useState("");
+  const [sortAsc, setSortAsc] = useState(true);
 
   const medicines = [
     { name: "Paracetamol", stock: 120, price: "Rs 50" },
@@ -42,70 +49,61 @@ const ManagerInventory: React.FC = () => {
     { name: "Insulin", stock: 5, price: "Rs 500" },
   ];
 
-  /* 🔥 Dynamic Status Logic */
   const getStatus = (stock: number) => {
     if (stock <= 5) return "Critical";
     if (stock <= 30) return "Low Stock";
     return "In Stock";
   };
 
+  /* 🔥 Filter + Sort */
   const filtered = useMemo(() => {
-    return medicines.filter((med) =>
-      med.name.toLowerCase().includes(search.toLowerCase()),
-    );
-  }, [search]);
+    return medicines
+      .filter((med) => med.name.toLowerCase().includes(search.toLowerCase()))
+      .sort((a, b) => (sortAsc ? a.stock - b.stock : b.stock - a.stock));
+  }, [search, sortAsc]);
+
+  /* 🔥 Dynamic Summary */
+  const total = medicines.length;
+  const lowStock = medicines.filter((m) => m.stock <= 30 && m.stock > 5).length;
+  const critical = medicines.filter((m) => m.stock <= 5).length;
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-100 via-gray-100 to-slate-200">
       <Header />
 
       <main className="flex-grow max-w-7xl mx-auto w-full p-6 space-y-12">
-        {/* Hero Section */}
-        <div className="relative bg-gradient-to-r from-green-700 to-emerald-700 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500 hover:scale-[1.01]">
-          <div className="absolute right-10 top-10 opacity-10 text-[140px]">
-            <Package />
-          </div>
-
-          <div className="relative z-10">
-            <h1 className="text-4xl font-bold">Inventory Management</h1>
-            <p className="opacity-90 mt-3 text-lg">
-              Monitor stock levels and manage medicines efficiently.
-            </p>
-          </div>
-        </div>
-
         {/* Stock Summary */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           <StockCard
             title="Total Medicines"
-            value="245"
+            value={total.toString()}
             gradient="from-blue-500 to-cyan-600"
             icon={<Package size={28} />}
           />
           <StockCard
             title="Low Stock Items"
-            value="18"
+            value={lowStock.toString()}
             gradient="from-yellow-500 to-orange-500"
             icon={<AlertTriangle size={28} />}
           />
           <StockCard
-            title="Out of Stock"
-            value="3"
+            title="Critical Stock"
+            value={critical.toString()}
             gradient="from-red-500 to-rose-600"
             icon={<AlertTriangle size={28} />}
           />
         </div>
 
         {/* Inventory Table */}
-        <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-200 transition">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-200">
+          <div className="flex justify-between mb-6 gap-4 flex-wrap">
             <h2 className="text-2xl font-semibold tracking-wide">
               Medicine Inventory
             </h2>
 
-            <div className="flex gap-4 items-center">
+            <div className="flex gap-4 items-center flex-wrap">
               {/* Search */}
-              <div className="flex items-center gap-2 border rounded-xl px-4 py-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-green-500 hover:shadow-md">
+              <div className="flex items-center gap-2 border rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-green-500">
                 <Search size={18} className="text-gray-400" />
                 <input
                   type="text"
@@ -116,7 +114,16 @@ const ManagerInventory: React.FC = () => {
                 />
               </div>
 
-              <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl transition-all duration-300 hover:bg-green-700 hover:scale-105 active:scale-95 shadow-md">
+              {/* Sort */}
+              <button
+                onClick={() => setSortAsc(!sortAsc)}
+                className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-xl hover:bg-gray-200 transition"
+              >
+                <ArrowUpDown size={16} />
+                Sort Stock
+              </button>
+
+              <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition shadow-md">
                 <Plus size={18} />
                 Add
               </button>
@@ -142,21 +149,20 @@ const ManagerInventory: React.FC = () => {
                     return (
                       <tr
                         key={i}
-                        className="even:bg-gray-50 hover:bg-green-50 transition-all duration-300 hover:shadow-sm"
+                        className={`even:bg-gray-50 transition-all duration-300 hover:bg-green-50 ${
+                          status === "Critical" ? "animate-pulse bg-red-50" : ""
+                        }`}
                       >
                         <td className="p-4 font-medium">{med.name}</td>
-
                         <td className="p-4 text-center font-semibold">
                           {med.stock}
                         </td>
-
                         <td className="p-4 text-right font-semibold">
                           {med.price}
                         </td>
-
                         <td className="p-4 text-center">
                           <span
-                            className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center justify-center gap-2 w-fit mx-auto ${
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
                               status === "In Stock"
                                 ? "bg-green-100 text-green-700"
                                 : status === "Low Stock"
@@ -164,15 +170,6 @@ const ManagerInventory: React.FC = () => {
                                   : "bg-red-100 text-red-700"
                             }`}
                           >
-                            <span
-                              className={`w-2 h-2 rounded-full ${
-                                status === "In Stock"
-                                  ? "bg-green-500"
-                                  : status === "Low Stock"
-                                    ? "bg-yellow-500"
-                                    : "bg-red-500"
-                              }`}
-                            />
                             {status}
                           </span>
                         </td>
