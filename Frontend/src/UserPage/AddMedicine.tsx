@@ -10,6 +10,8 @@ import {
   Calendar,
   Truck,
   CheckCircle,
+  AlertTriangle,
+  RefreshCcw,
 } from "lucide-react";
 
 interface MedicineForm {
@@ -41,17 +43,7 @@ const AddMedicine: React.FC = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const isFormValid =
-    form.name && form.category && form.price && form.stock && form.expiry;
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!isFormValid) return;
-
-    setSuccess(true);
-
-    // Reset form after success
+  const handleReset = () => {
     setForm({
       name: "",
       category: "",
@@ -60,8 +52,28 @@ const AddMedicine: React.FC = () => {
       expiry: "",
       supplier: "",
     });
+  };
 
-    // Redirect after 1.5s
+  const isFormValid =
+    form.name && form.category && form.price && form.stock && form.expiry;
+
+  const isLowStock = Number(form.stock) > 0 && Number(form.stock) < 10;
+
+  const isNearExpiry = () => {
+    if (!form.expiry) return false;
+    const today = new Date();
+    const expiryDate = new Date(form.expiry);
+    const diffTime = expiryDate.getTime() - today.getTime();
+    const diffDays = diffTime / (1000 * 3600 * 24);
+    return diffDays <= 30;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isFormValid) return;
+
+    setSuccess(true);
+
     setTimeout(() => {
       navigate("/medicines");
     }, 1500);
@@ -73,13 +85,13 @@ const AddMedicine: React.FC = () => {
 
       <main className="flex-grow p-6 max-w-6xl mx-auto w-full">
         {/* Page Header */}
-        <div className="bg-white/80 backdrop-blur-md border rounded-2xl p-6 shadow mb-6">
+        <div className="bg-white rounded-2xl p-6 shadow mb-6">
           <h1 className="text-3xl font-bold flex items-center gap-3 text-blue-600">
             <Pill />
             Add New Medicine
           </h1>
           <p className="text-gray-600 mt-1">
-            Fill in the details below to register a new product.
+            Enter product details carefully before saving.
           </p>
         </div>
 
@@ -98,104 +110,88 @@ const AddMedicine: React.FC = () => {
           <div className="lg:col-span-2 space-y-6">
             {/* Basic Info */}
             <div className="bg-white rounded-2xl shadow p-6">
-              <h2 className="text-lg font-semibold mb-4">
-                1. Basic Information
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Pill size={18} /> Basic Information
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="relative">
-                  <Pill className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    name="name"
-                    value={form.name}
-                    placeholder="Medicine Name"
-                    onChange={handleChange}
-                    className="border w-full pl-10 pr-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                    required
-                  />
-                </div>
+                <input
+                  name="name"
+                  value={form.name}
+                  placeholder="Medicine Name"
+                  onChange={handleChange}
+                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  required
+                />
 
-                <div className="relative">
-                  <Tag className="absolute left-3 top-3 text-gray-400" />
-                  <select
-                    name="category"
-                    value={form.category}
-                    onChange={handleChange}
-                    className="border w-full pl-10 pr-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    <option>Tablet</option>
-                    <option>Capsule</option>
-                    <option>Syrup</option>
-                    <option>Injection</option>
-                  </select>
-                </div>
+                <select
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  required
+                >
+                  <option value="">Select Category</option>
+                  <option>Tablet</option>
+                  <option>Capsule</option>
+                  <option>Syrup</option>
+                  <option>Injection</option>
+                </select>
               </div>
             </div>
 
             {/* Pricing */}
             <div className="bg-white rounded-2xl shadow p-6">
-              <h2 className="text-lg font-semibold mb-4">2. Stock & Pricing</h2>
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <DollarSign size={18} /> Stock & Pricing
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="relative">
-                  <DollarSign className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    name="price"
-                    type="number"
-                    value={form.price}
-                    placeholder="Price (Rs)"
-                    onChange={handleChange}
-                    className="border w-full pl-10 pr-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                    required
-                  />
-                </div>
+                <input
+                  name="price"
+                  type="number"
+                  value={form.price}
+                  placeholder="Price (Rs)"
+                  onChange={handleChange}
+                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  required
+                />
 
-                <div className="relative">
-                  <Boxes className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    name="stock"
-                    type="number"
-                    value={form.stock}
-                    placeholder="Stock Quantity"
-                    onChange={handleChange}
-                    className="border w-full pl-10 pr-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                    required
-                  />
-                </div>
+                <input
+                  name="stock"
+                  type="number"
+                  value={form.stock}
+                  placeholder="Stock Quantity"
+                  onChange={handleChange}
+                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  required
+                />
               </div>
             </div>
 
             {/* Supplier */}
             <div className="bg-white rounded-2xl shadow p-6">
-              <h2 className="text-lg font-semibold mb-4">
-                3. Supplier & Expiry
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Truck size={18} /> Supplier & Expiry
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    name="expiry"
-                    type="date"
-                    value={form.expiry}
-                    onChange={handleChange}
-                    className="border w-full pl-10 pr-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                    required
-                  />
-                </div>
+                <input
+                  name="expiry"
+                  type="date"
+                  value={form.expiry}
+                  onChange={handleChange}
+                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  required
+                />
 
-                <div className="relative">
-                  <Truck className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    name="supplier"
-                    value={form.supplier}
-                    placeholder="Supplier Name"
-                    onChange={handleChange}
-                    className="border w-full pl-10 pr-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                </div>
+                <input
+                  name="supplier"
+                  value={form.supplier}
+                  placeholder="Supplier Name"
+                  onChange={handleChange}
+                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                />
               </div>
             </div>
           </div>
@@ -204,7 +200,7 @@ const AddMedicine: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-xl p-6 h-fit sticky top-24">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <CheckCircle className="text-green-600" />
-              Summary
+              Live Preview
             </h2>
 
             <ul className="text-sm space-y-2 text-gray-600">
@@ -215,7 +211,7 @@ const AddMedicine: React.FC = () => {
                 <b>Category:</b> {form.category || "—"}
               </li>
               <li>
-                <b>Price:</b> {form.price || "—"}
+                <b>Price:</b> {form.price ? `Rs ${form.price}` : "—"}
               </li>
               <li>
                 <b>Stock:</b> {form.stock || "—"}
@@ -227,6 +223,20 @@ const AddMedicine: React.FC = () => {
                 <b>Supplier:</b> {form.supplier || "—"}
               </li>
             </ul>
+
+            {isLowStock && (
+              <div className="mt-4 flex items-center gap-2 text-yellow-600 text-sm">
+                <AlertTriangle size={16} />
+                Warning: Low stock level!
+              </div>
+            )}
+
+            {isNearExpiry() && (
+              <div className="mt-2 flex items-center gap-2 text-red-600 text-sm">
+                <AlertTriangle size={16} />
+                Warning: Expiry within 30 days!
+              </div>
+            )}
 
             <div className="border-t mt-4 pt-4 space-y-3">
               <button
@@ -243,10 +253,11 @@ const AddMedicine: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => navigate("/medicines")}
-                className="w-full border py-2 rounded-xl hover:bg-gray-50 transition"
+                onClick={handleReset}
+                className="w-full flex items-center justify-center gap-2 border py-2 rounded-xl hover:bg-gray-50 transition"
               >
-                Cancel
+                <RefreshCcw size={14} />
+                Clear Form
               </button>
             </div>
           </div>
