@@ -1,62 +1,91 @@
 import React from "react";
-import { Facebook, Mail, Phone } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Facebook, Mail, Phone, ArrowUp } from "lucide-react";
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
+  const quickLinks = [
+    { name: "Home", path: "/" },
+    { name: "Medicines", path: "/medicines" },
+    { name: "Inventory", path: "/inventory" },
+    { name: "Sales", path: "/sales" },
+    { name: "Reports", path: "/reports" },
+  ];
+
+  const systemStatus = "Live";
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <footer className="bg-gradient-to-r from-blue-700 to-blue-800 text-white mt-10 shadow-lg">
-      <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 text-white mt-12 shadow-xl relative">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
         {/* System Info */}
         <div>
-          <h2 className="text-xl font-bold tracking-wide">PharmaCare</h2>
-          <p className="text-sm text-blue-100 mt-3 leading-relaxed">
-            Smart Pharmacy Management System designed for efficient inventory,
-            sales tracking, and real-time reporting.
+          <h2 className="text-2xl font-bold tracking-wide">PharmaCare</h2>
+          <p className="text-sm text-blue-100 mt-4 leading-relaxed">
+            A modern Pharmacy Management System built to manage medicines,
+            inventory, billing, and analytics efficiently.
           </p>
         </div>
 
         {/* Quick Links */}
         <div>
-          <h3 className="font-semibold mb-3">Quick Links</h3>
-          <ul className="space-y-2 text-sm text-blue-100">
-            {["Home", "Medicines", "Inventory", "Sales", "Reports"].map(
-              (item, index) => (
-                <li
-                  key={index}
-                  className="hover:text-white hover:translate-x-1 transition-all duration-200 cursor-pointer"
+          <h3 className="font-semibold mb-4 text-lg">Quick Links</h3>
+          <ul className="space-y-2 text-sm">
+            {quickLinks.map((link, index) => (
+              <li key={index}>
+                <Link
+                  to={link.path}
+                  className="text-blue-200 hover:text-white hover:pl-2 transition-all duration-200"
                 >
-                  {item}
-                </li>
-              ),
-            )}
+                  {link.name}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
-        {/* Contact & System Info */}
+        {/* Contact & Info */}
         <div>
-          <h3 className="font-semibold mb-3">Contact & Info</h3>
-          <ul className="space-y-2 text-sm text-blue-100">
+          <h3 className="font-semibold mb-4 text-lg">Contact & System</h3>
+          <ul className="space-y-3 text-sm text-blue-200">
             <li className="flex items-center gap-2 hover:text-white transition">
-              <Mail size={16} />
-              support@pharmacare.com
+              <Mail size={16} /> support@pharmacare.com
             </li>
             <li className="flex items-center gap-2 hover:text-white transition">
-              <Phone size={16} />
-              +977-9800000000
+              <Phone size={16} /> +977-9800000000
             </li>
             <li className="flex items-center gap-2 hover:text-white transition">
-              <Facebook size={16} />
-              PharmaCare Official
+              <Facebook size={16} /> PharmaCare Official
             </li>
-            <li className="mt-2">Version: 1.0.1</li>
-            <li>Status: Live</li>
+
+            {/* System Status Badge */}
+            <li className="mt-3">Version: 1.1.0</li>
+            <li>
+              Status:{" "}
+              <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                {systemStatus}
+              </span>
+            </li>
           </ul>
         </div>
       </div>
 
+      {/* Back To Top Button */}
+      <button
+        onClick={scrollToTop}
+        className="absolute right-6 top-6 bg-white text-blue-800 p-2 rounded-full shadow-md hover:scale-110 transition"
+        aria-label="Back to top"
+      >
+        <ArrowUp size={18} />
+      </button>
+
       {/* Bottom Bar */}
-      <div className="border-t border-blue-600 text-center text-sm py-4 text-blue-100">
+      <div className="border-t border-blue-600 text-center text-sm py-5 text-blue-200">
         © {currentYear} PharmaCare | Developed by Aaloka Poudel | All rights
         reserved.
       </div>
