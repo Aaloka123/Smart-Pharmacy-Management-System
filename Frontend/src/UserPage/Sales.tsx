@@ -28,6 +28,7 @@ const mockMedicines: Medicine[] = [
 ];
 
 const Sales: React.FC = () => {
+  const [medicines, setMedicines] = useState<Medicine[]>(mockMedicines);
   const [cart, setCart] = useState<(Medicine & { qty: number })[]>([]);
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
@@ -35,7 +36,7 @@ const Sales: React.FC = () => {
 
   const categories = ["All", "Pain", "Antibiotic", "Supplement", "Cold"];
 
-  const filtered = mockMedicines.filter(
+  const filtered = medicines.filter(
     (m) =>
       (activeCategory === "All" || m.category === activeCategory) &&
       m.name.toLowerCase().includes(search.toLowerCase()),
@@ -46,24 +47,62 @@ const Sales: React.FC = () => {
 
     setCart((prev) => {
       const found = prev.find((i) => i.id === med.id);
+
       if (found) {
+        if (found.qty >= med.stock + found.qty) return prev;
         return prev.map((i) =>
           i.id === med.id ? { ...i, qty: i.qty + 1 } : i,
         );
       }
+
       return [...prev, { ...med, qty: 1 }];
     });
+
+    // Reduce stock
+    setMedicines((prev) =>
+      prev.map((m) => (m.id === med.id ? { ...m, stock: m.stock - 1 } : m)),
+    );
 
     setAddedId(med.id);
     setTimeout(() => setAddedId(null), 800);
   };
 
   const updateQty = (id: number, delta: number) => {
+    const item = cart.find((i) => i.id === id);
+    if (!item) return;
+
+    if (delta > 0) {
+      const med = medicines.find((m) => m.id === id);
+      if (!med || med.stock === 0) return;
+
+      setMedicines((prev) =>
+        prev.map((m) => (m.id === id ? { ...m, stock: m.stock - 1 } : m)),
+      );
+    }
+
+    if (delta < 0) {
+      setMedicines((prev) =>
+        prev.map((m) => (m.id === id ? { ...m, stock: m.stock + 1 } : m)),
+      );
+    }
+
     setCart((prev) =>
       prev
         .map((i) => (i.id === id ? { ...i, qty: i.qty + delta } : i))
         .filter((i) => i.qty > 0),
     );
+  };
+
+  const clearCart = () => {
+    // Restore stock
+    setMedicines((prev) =>
+      prev.map((m) => {
+        const item = cart.find((i) => i.id === m.id);
+        return item ? { ...m, stock: m.stock + item.qty } : m;
+      }),
+    );
+
+    setCart([]);
   };
 
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
@@ -236,7 +275,15 @@ const Sales: React.FC = () => {
                 <span className="text-green-600">Rs {grandTotal}</span>
               </div>
 
-              <button className="w-full mt-3 bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 hover:scale-105 transition">
+              <button
+                disabled={cart.length === 0}
+                onClick={clearCart}
+                className={`w-full mt-3 py-3 rounded-xl transition ${
+                  cart.length === 0
+                    ? "bg-gray-300"
+                    : "bg-green-600 text-white hover:bg-green-700 hover:scale-105"
+                }`}
+              >
                 Complete Sale
               </button>
             </div>
