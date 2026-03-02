@@ -4,10 +4,7 @@ import Footer from "../UserComponent/Footer";
 import { useNavigate } from "react-router-dom";
 import {
   Pill,
-  Tag,
   DollarSign,
-  Boxes,
-  Calendar,
   Truck,
   CheckCircle,
   AlertTriangle,
@@ -21,6 +18,8 @@ interface MedicineForm {
   stock: string;
   expiry: string;
   supplier: string;
+  batch: string;
+  manufacturer: string;
 }
 
 const AddMedicine: React.FC = () => {
@@ -33,6 +32,8 @@ const AddMedicine: React.FC = () => {
     stock: "",
     expiry: "",
     supplier: "",
+    batch: "",
+    manufacturer: "",
   });
 
   const [success, setSuccess] = useState(false);
@@ -51,11 +52,17 @@ const AddMedicine: React.FC = () => {
       stock: "",
       expiry: "",
       supplier: "",
+      batch: "",
+      manufacturer: "",
     });
   };
 
   const isFormValid =
-    form.name && form.category && form.price && form.stock && form.expiry;
+    form.name &&
+    form.category &&
+    Number(form.price) > 0 &&
+    Number(form.stock) >= 0 &&
+    form.expiry;
 
   const isLowStock = Number(form.stock) > 0 && Number(form.stock) < 10;
 
@@ -75,6 +82,7 @@ const AddMedicine: React.FC = () => {
     setSuccess(true);
 
     setTimeout(() => {
+      handleReset();
       navigate("/medicines");
     }, 1500);
   };
@@ -98,7 +106,7 @@ const AddMedicine: React.FC = () => {
         {success && (
           <div className="bg-green-100 text-green-700 p-4 rounded-xl mb-6 flex items-center gap-2">
             <CheckCircle size={18} />
-            Medicine added successfully!
+            Medicine added successfully and inventory updated!
           </div>
         )}
 
@@ -137,6 +145,22 @@ const AddMedicine: React.FC = () => {
                   <option>Syrup</option>
                   <option>Injection</option>
                 </select>
+
+                <input
+                  name="batch"
+                  value={form.batch}
+                  placeholder="Batch Number"
+                  onChange={handleChange}
+                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+
+                <input
+                  name="manufacturer"
+                  value={form.manufacturer}
+                  placeholder="Manufacturer Name"
+                  onChange={handleChange}
+                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                />
               </div>
             </div>
 
@@ -150,6 +174,7 @@ const AddMedicine: React.FC = () => {
                 <input
                   name="price"
                   type="number"
+                  min="0"
                   value={form.price}
                   placeholder="Price (Rs)"
                   onChange={handleChange}
@@ -160,6 +185,7 @@ const AddMedicine: React.FC = () => {
                 <input
                   name="stock"
                   type="number"
+                  min="0"
                   value={form.stock}
                   placeholder="Stock Quantity"
                   onChange={handleChange}
@@ -179,6 +205,7 @@ const AddMedicine: React.FC = () => {
                 <input
                   name="expiry"
                   type="date"
+                  min={new Date().toISOString().split("T")[0]}
                   value={form.expiry}
                   onChange={handleChange}
                   className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
@@ -209,6 +236,12 @@ const AddMedicine: React.FC = () => {
               </li>
               <li>
                 <b>Category:</b> {form.category || "—"}
+              </li>
+              <li>
+                <b>Batch:</b> {form.batch || "—"}
+              </li>
+              <li>
+                <b>Manufacturer:</b> {form.manufacturer || "—"}
               </li>
               <li>
                 <b>Price:</b> {form.price ? `Rs ${form.price}` : "—"}
