@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Package,
   AlertTriangle,
   DollarSign,
   Trash2,
-  ArrowRight,
   Plus,
   BarChart3,
   ShoppingCart,
@@ -21,6 +20,20 @@ interface KPICardProps {
   icon: React.ReactNode;
 }
 
+interface ActionCardProps {
+  title: string;
+  desc: string;
+  link: string;
+  color: string;
+  icon: React.ReactNode;
+}
+
+interface ActivityItemProps {
+  color: string;
+  text: string;
+  time: string;
+}
+
 const KPICard: React.FC<KPICardProps> = ({ title, value, color, bg, icon }) => (
   <div className="relative bg-white rounded-2xl p-5 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
     <div className="absolute -top-3 -right-3 opacity-10 text-6xl">{icon}</div>
@@ -30,7 +43,13 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, color, bg, icon }) => (
   </div>
 );
 
-const ActionCard = ({ title, desc, link, color, icon }: any) => (
+const ActionCard: React.FC<ActionCardProps> = ({
+  title,
+  desc,
+  link,
+  color,
+  icon,
+}) => (
   <Link
     to={link}
     className={`rounded-xl p-6 text-white ${color} hover:opacity-90 transition-all hover:-translate-y-1 shadow-lg flex justify-between items-center`}
@@ -43,7 +62,39 @@ const ActionCard = ({ title, desc, link, color, icon }: any) => (
   </Link>
 );
 
+const ActivityItem: React.FC<ActivityItemProps> = ({ color, text, time }) => (
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-3">
+      <span className={`w-3 h-3 rounded-full ${color}`} />
+      <p className="text-sm">{text}</p>
+    </div>
+    <span className="text-xs text-gray-400">{time}</span>
+  </div>
+);
+
 const Home: React.FC = () => {
+  const [currentTime, setCurrentTime] = useState<string>("");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      setCurrentTime(
+        now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      );
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning ☀️";
+    if (hour < 18) return "Good Afternoon 🌤️";
+    return "Good Evening 🌙";
+  };
+
+  const todayDate = new Date().toLocaleDateString();
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-100 to-slate-200">
       <Header />
@@ -53,11 +104,19 @@ const Home: React.FC = () => {
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white shadow-xl flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold">PharmaCare Dashboard 💊</h1>
-            <p className="opacity-90 mt-1">Smart pharmacy management system</p>
+            <p className="opacity-90 mt-1">
+              {getGreeting()} — Smart pharmacy management system
+            </p>
+            <p className="text-sm opacity-80 mt-2">
+              {todayDate} | {currentTime}
+            </p>
           </div>
+
           <div className="text-right">
             <p className="text-sm opacity-80">System Status</p>
-            <p className="font-bold text-green-300">All services running</p>
+            <p className="font-bold text-green-300 animate-pulse">
+              All services running
+            </p>
           </div>
         </div>
 
@@ -156,15 +215,5 @@ const Home: React.FC = () => {
     </div>
   );
 };
-
-const ActivityItem = ({ color, text, time }: any) => (
-  <div className="flex items-center justify-between">
-    <div className="flex items-center gap-3">
-      <span className={`w-3 h-3 rounded-full ${color}`} />
-      <p className="text-sm">{text}</p>
-    </div>
-    <span className="text-xs text-gray-400">{time}</span>
-  </div>
-);
 
 export default Home;
