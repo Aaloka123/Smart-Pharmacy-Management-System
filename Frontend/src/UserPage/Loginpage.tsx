@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, User, ShieldCheck, Eye, EyeOff } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  User,
+  ShieldCheck,
+  Eye,
+  EyeOff,
+  Loader2,
+} from "lucide-react";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -14,14 +23,36 @@ const Login: React.FC = () => {
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState("");
 
+  // Auto-login if remembered
+  useEffect(() => {
+    const savedUser = localStorage.getItem("pharmaUser");
+    if (savedUser) {
+      navigate("/");
+    }
+  }, [navigate]);
+
   const resetErrors = () => setError("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const validateEmail = (email: string) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (!email || !password || (!isLogin && !name)) {
       setError("Please fill all required fields.");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
       return;
     }
 
@@ -38,8 +69,7 @@ const Login: React.FC = () => {
           setError("Invalid email or password.");
         }
       } else {
-        setError("");
-        alert("Account created successfully!");
+        alert("Account created successfully! Please login.");
         setIsLogin(true);
       }
 
@@ -77,7 +107,7 @@ const Login: React.FC = () => {
                 setIsLogin(true);
                 resetErrors();
               }}
-              className={`w-1/2 py-2 font-semibold transition ${
+              className={`w-1/2 py-2 font-semibold ${
                 isLogin ? "bg-blue-600 text-white" : ""
               }`}
             >
@@ -88,7 +118,7 @@ const Login: React.FC = () => {
                 setIsLogin(false);
                 resetErrors();
               }}
-              className={`w-1/2 py-2 font-semibold transition ${
+              className={`w-1/2 py-2 font-semibold ${
                 !isLogin ? "bg-blue-600 text-white" : ""
               }`}
             >
@@ -170,12 +200,13 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2 rounded-lg font-semibold transition ${
+              className={`w-full py-2 rounded-lg font-semibold flex justify-center items-center gap-2 ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed text-white"
                   : "bg-blue-600 hover:bg-blue-700 text-white"
               }`}
             >
+              {loading && <Loader2 size={16} className="animate-spin" />}
               {loading ? "Processing..." : isLogin ? "Login" : "Create Account"}
             </button>
           </form>
