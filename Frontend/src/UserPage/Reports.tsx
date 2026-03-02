@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
 import {
@@ -7,7 +7,18 @@ import {
   ShoppingCart,
   AlertTriangle,
   Calendar,
+  Search,
 } from "lucide-react";
+
+/* ---------- Types ---------- */
+
+interface Sale {
+  date: string;
+  medicine: string;
+  qty: number;
+  amount: number;
+  status: string;
+}
 
 /* ---------- Stat Card ---------- */
 
@@ -39,17 +50,65 @@ const StatCard = ({
 /* ---------- Main Component ---------- */
 
 const Reports: React.FC = () => {
+  const [search, setSearch] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+  const sales: Sale[] = [
+    {
+      date: "2026-02-06",
+      medicine: "Paracetamol",
+      qty: 10,
+      amount: 500,
+      status: "Completed",
+    },
+    {
+      date: "2026-02-06",
+      medicine: "Amoxicillin",
+      qty: 5,
+      amount: 750,
+      status: "Completed",
+    },
+    {
+      date: "2026-02-05",
+      medicine: "Vitamin C",
+      qty: 20,
+      amount: 1000,
+      status: "Completed",
+    },
+  ];
+
+  /* ---------- Filtering Logic ---------- */
+
+  const filteredSales = useMemo(() => {
+    return sales.filter((sale) => {
+      const matchesSearch = sale.medicine
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+      const matchesFrom = fromDate ? sale.date >= fromDate : true;
+      const matchesTo = toDate ? sale.date <= toDate : true;
+
+      return matchesSearch && matchesFrom && matchesTo;
+    });
+  }, [search, fromDate, toDate]);
+
+  /* ---------- Calculations ---------- */
+
+  const totalRevenue = filteredSales.reduce((sum, s) => sum + s.amount, 0);
+  const totalOrders = filteredSales.length;
+
   return (
     <div className="min-h-screen flex flex-col relative bg-gradient-to-br from-slate-100 via-gray-100 to-slate-200 overflow-hidden">
-      {/* Floating Background Blobs */}
+      {/* Floating Background */}
       <div className="absolute top-10 left-10 w-72 h-72 bg-blue-400 opacity-20 blur-3xl rounded-full animate-pulse" />
       <div className="absolute bottom-10 right-10 w-72 h-72 bg-purple-400 opacity-20 blur-3xl rounded-full animate-pulse" />
 
       <Header />
 
       <main className="flex-grow max-w-7xl mx-auto w-full p-6 space-y-12 relative z-10">
-        {/* 🔥 Hero Section */}
-        <div className="relative bg-gradient-to-r from-blue-700 to-indigo-700 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500 hover:scale-[1.02]">
+        {/* Hero */}
+        <div className="relative bg-gradient-to-r from-blue-700 to-indigo-700 rounded-3xl p-10 text-white shadow-2xl">
           <div className="absolute right-10 top-10 opacity-10 text-[140px]">
             <TrendingUp />
           </div>
@@ -62,20 +121,22 @@ const Reports: React.FC = () => {
               </p>
             </div>
 
-            <button className="flex items-center gap-3 bg-white text-blue-700 px-6 py-3 rounded-2xl font-semibold shadow-lg hover:scale-105 hover:bg-gray-100 transition-all duration-300">
+            <button className="flex items-center gap-3 bg-white text-blue-700 px-6 py-3 rounded-2xl font-semibold shadow-lg hover:scale-105 transition">
               <Download size={20} />
               Export Report
             </button>
           </div>
         </div>
 
-        {/* 🔎 Filter Panel */}
-        <div className="bg-white/70 backdrop-blur-lg shadow-2xl rounded-3xl p-6 flex flex-wrap gap-6 items-center border border-white/50 transition hover:shadow-3xl">
+        {/* Filter Panel */}
+        <div className="bg-white/70 backdrop-blur-lg shadow-2xl rounded-3xl p-6 flex flex-wrap gap-6 items-center border border-white/50">
           <div className="flex items-center gap-3">
             <Calendar size={18} />
             <span className="font-medium">From</span>
             <input
               type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
               className="border rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
@@ -84,26 +145,24 @@ const Reports: React.FC = () => {
             <span className="font-medium">To</span>
             <input
               type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
               className="border rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
-
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 hover:scale-105 transition">
-            Apply Filters
-          </button>
         </div>
 
-        {/* 📊 Stats Grid */}
+        {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <StatCard
             title="Total Revenue"
-            value="Rs 245,000"
+            value={`Rs ${totalRevenue.toLocaleString()}`}
             gradient="from-green-500 to-emerald-600"
             icon={<TrendingUp size={28} />}
           />
           <StatCard
             title="Total Orders"
-            value="1,245"
+            value={totalOrders.toString()}
             gradient="from-blue-500 to-cyan-600"
             icon={<ShoppingCart size={28} />}
           />
@@ -121,19 +180,26 @@ const Reports: React.FC = () => {
           />
         </div>
 
-        {/* 📋 Sales Table */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100 transition hover:shadow-3xl">
-          {/* Header + Search */}
+        {/* Sales Table */}
+        <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             <h2 className="text-2xl font-semibold tracking-wide">
               Sales Transactions
             </h2>
 
-            <input
-              type="text"
-              placeholder="Search medicine..."
-              className="border rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition-all duration-300 hover:shadow-md"
-            />
+            <div className="relative">
+              <Search
+                className="absolute left-3 top-2.5 text-gray-400"
+                size={18}
+              />
+              <input
+                type="text"
+                placeholder="Search medicine..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="border rounded-xl pl-10 pr-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
           </div>
 
           <div className="overflow-x-auto rounded-2xl">
@@ -148,68 +214,33 @@ const Reports: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {[
-                  ["2026-02-06", "Paracetamol", 10, "Rs 500", "Completed"],
-                  ["2026-02-06", "Amoxicillin", 5, "Rs 750", "Completed"],
-                  ["2026-02-05", "Vitamin C", 20, "Rs 1,000", "Completed"],
-                ].map((row, i) => (
+                {filteredSales.map((sale, i) => (
                   <tr
                     key={i}
-                    className="even:bg-gray-50 hover:bg-blue-50 hover:scale-[1.01] transition-all duration-300"
+                    className="even:bg-gray-50 hover:bg-blue-50 transition"
                   >
-                    <td className="p-4">{row[0]}</td>
-                    <td className="p-4 font-medium">{row[1]}</td>
-                    <td className="p-4 text-center">{row[2]}</td>
-                    <td className="p-4 text-right font-semibold">{row[3]}</td>
+                    <td className="p-4">{sale.date}</td>
+                    <td className="p-4 font-medium">{sale.medicine}</td>
+                    <td className="p-4 text-center">{sale.qty}</td>
+                    <td className="p-4 text-right font-semibold">
+                      Rs {sale.amount}
+                    </td>
                     <td className="p-4 text-center">
-                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold shadow-sm transition-all duration-300 hover:scale-110 hover:shadow-md">
-                        {row[4]}
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                        {sale.status}
                       </span>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-        </div>
 
-        {/* 📈 Insights */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            {
-              title: "Top Selling",
-              value: "Paracetamol",
-              width: "80%",
-              gradient: "from-green-400 to-green-600",
-            },
-            {
-              title: "Least Selling",
-              value: "Insulin",
-              width: "25%",
-              gradient: "from-red-400 to-red-600",
-            },
-            {
-              title: "Stock Health",
-              value: "Good",
-              width: "70%",
-              gradient: "from-blue-400 to-blue-600",
-            },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-3xl shadow-xl p-6 transition-all duration-500 hover:scale-[1.05] hover:-translate-y-2 hover:shadow-2xl"
-            >
-              <h3 className="font-semibold mb-3">{item.title}</h3>
-              <p className="text-xl font-bold">{item.value}</p>
-
-              <div className="w-full bg-gray-200 h-3 rounded-full mt-4 overflow-hidden">
-                <div
-                  className={`bg-gradient-to-r ${item.gradient} h-3 rounded-full transition-all duration-1000`}
-                  style={{ width: item.width }}
-                />
+            {filteredSales.length === 0 && (
+              <div className="text-center py-6 text-gray-500">
+                No transactions found.
               </div>
-            </div>
-          ))}
+            )}
+          </div>
         </div>
       </main>
 
