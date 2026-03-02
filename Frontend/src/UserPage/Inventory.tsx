@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import {
   Truck,
   CheckCircle,
   Search,
+  Filter,
 } from "lucide-react";
 
 interface InventoryItem {
@@ -18,6 +19,13 @@ interface InventoryItem {
   minStock: number;
   supplier: string;
   lastUpdated: string;
+}
+
+interface KpiProps {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  color: "blue" | "green" | "red" | "purple";
 }
 
 const Inventory: React.FC = () => {
@@ -54,13 +62,19 @@ const Inventory: React.FC = () => {
   ]);
 
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
 
-  const filtered = inventory.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = useMemo(() => {
+    return inventory.filter(
+      (item) =>
+        item.name.toLowerCase().includes(search.toLowerCase()) &&
+        (categoryFilter ? item.category === categoryFilter : true),
+    );
+  }, [inventory, search, categoryFilter]);
 
   const healthy = inventory.filter((i) => i.stock > i.minStock).length;
   const low = inventory.length - healthy;
+  const suppliers = new Set(inventory.map((i) => i.supplier)).size;
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-100 to-slate-200">
@@ -73,7 +87,9 @@ const Inventory: React.FC = () => {
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <Package /> Inventory Management
             </h1>
-            <p className="opacity-90">Real-time stock & supplier tracking</p>
+            <p className="opacity-90">
+              Real-time stock, supplier & update tracking
+            </p>
           </div>
 
           <button
@@ -83,6 +99,14 @@ const Inventory: React.FC = () => {
             + Add Stock
           </button>
         </div>
+
+        {/* Alert Banner */}
+        {low > 0 && (
+          <div className="bg-red-100 text-red-700 p-4 rounded-xl flex items-center gap-2">
+            <AlertTriangle size={18} />
+            {low} item(s) need immediate restocking.
+          </div>
+        )}
 
         {/* KPIs */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -104,31 +128,53 @@ const Inventory: React.FC = () => {
             icon={<AlertTriangle />}
             color="red"
           />
-          <Kpi title="Suppliers" value={3} icon={<Truck />} color="purple" />
+          <Kpi
+            title="Suppliers"
+            value={suppliers}
+            icon={<Truck />}
+            color="purple"
+          />
         </div>
 
-        {/* Search */}
-        <div className="bg-white/80 backdrop-blur shadow rounded-xl p-4 flex items-center gap-3">
-          <Search size={18} className="text-blue-500" />
-          <input
-            type="text"
-            placeholder="Search medicine..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="outline-none w-full bg-transparent"
-          />
+        {/* Search & Filter */}
+        <div className="bg-white shadow rounded-xl p-4 flex flex-col md:flex-row gap-4 md:items-center">
+          <div className="flex items-center gap-2 flex-1">
+            <Search size={18} className="text-blue-500" />
+            <input
+              type="text"
+              placeholder="Search medicine..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="outline-none w-full"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Filter size={16} />
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="border rounded-lg px-3 py-1"
+            >
+              <option value="">All Categories</option>
+              <option value="Tablet">Tablet</option>
+              <option value="Capsule">Capsule</option>
+              <option value="Syrup">Syrup</option>
+            </select>
+          </div>
         </div>
 
         {/* Table */}
         <div className="bg-white shadow-2xl rounded-2xl overflow-hidden border">
           <table className="min-w-full text-sm">
-            <thead className="bg-blue-600 text-white sticky top-0">
+            <thead className="bg-blue-600 text-white">
               <tr>
                 <th className="px-4 py-3 text-left">Medicine</th>
                 <th className="px-4 py-3">Category</th>
                 <th className="px-4 py-3">Stock</th>
                 <th className="px-4 py-3">Level</th>
                 <th className="px-4 py-3">Supplier</th>
+                <th className="px-4 py-3">Last Updated</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Action</th>
               </tr>
@@ -154,11 +200,10 @@ const Inventory: React.FC = () => {
                       {item.stock}
                     </td>
 
-                    {/* Progress */}
                     <td className="px-4 py-3">
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
-                          className={`h-2 rounded-full transition-all ${
+                          className={`h-2 rounded-full ${
                             percent > 70
                               ? "bg-green-500"
                               : percent > 40
@@ -172,6 +217,9 @@ const Inventory: React.FC = () => {
                     </td>
 
                     <td className="px-4 py-3 text-center">{item.supplier}</td>
+                    <td className="px-4 py-3 text-center">
+                      {item.lastUpdated}
+                    </td>
 
                     <td className="px-4 py-3 text-center">
                       {item.stock > item.minStock ? (
@@ -209,30 +257,27 @@ const Inventory: React.FC = () => {
   );
 };
 
-const Kpi = ({
-  title,
-  value,
-  icon,
-  color,
-}: {
-  title: string;
-  value: number;
-  icon: React.ReactNode;
-  color: string;
-}) => (
-  <div
-    className={`bg-white shadow rounded-xl p-5 border-l-4 border-${color}-600`}
-  >
-    <div className="flex justify-between items-center">
-      <div>
-        <p className="text-gray-500">{title}</p>
-        <h2 className="text-2xl font-bold">{value}</h2>
-      </div>
-      <div className={`text-${color}-600 bg-${color}-100 p-2 rounded-full`}>
-        {icon}
+const Kpi: React.FC<KpiProps> = ({ title, value, icon, color }) => {
+  const colorMap = {
+    blue: "border-blue-600 text-blue-600 bg-blue-100",
+    green: "border-green-600 text-green-600 bg-green-100",
+    red: "border-red-600 text-red-600 bg-red-100",
+    purple: "border-purple-600 text-purple-600 bg-purple-100",
+  };
+
+  return (
+    <div
+      className={`bg-white shadow rounded-xl p-5 border-l-4 ${colorMap[color]}`}
+    >
+      <div className="flex justify-between items-center">
+        <div>
+          <p className="text-gray-500">{title}</p>
+          <h2 className="text-2xl font-bold">{value}</h2>
+        </div>
+        <div className={`p-2 rounded-full ${colorMap[color]}`}>{icon}</div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Inventory;
