@@ -1,46 +1,73 @@
 import React, { useState, useEffect } from "react";
-import { Eye, EyeOff, Loader2, Moon, Sun } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 const Login: React.FC = () => {
+  const [step, setStep] = useState<"login" | "otp">("login");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
+
   const [showPassword, setShowPassword] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [capsLock, setCapsLock] = useState(false);
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
   const [attempts, setAttempts] = useState(0);
-  const [locked, setLocked] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
   const MAX_ATTEMPTS = 3;
 
+  // Cooldown timer
   useEffect(() => {
-    if (attempts >= MAX_ATTEMPTS) {
-      setLocked(true);
-      setError("Account locked due to multiple failed attempts.");
+    if (cooldown > 0) {
+      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+      return () => clearTimeout(timer);
     }
-  }, [attempts]);
-
-  const handleCapsLock = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    setCapsLock(e.getModifierState("CapsLock"));
-  };
+  }, [cooldown]);
 
   const validateEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    if (locked) return;
+    if (cooldown > 0) return;
 
     if (!validateEmail(email) || password.length < 6) {
-      setAttempts((prev) => prev + 1);
-      setError(
-        `Invalid credentials. Attempts left: ${MAX_ATTEMPTS - attempts - 1}`,
-      );
+      const newAttempts = attempts + 1;
+      setAttempts(newAttempts);
+
+      if (newAttempts >= MAX_ATTEMPTS) {
+        setCooldown(10);
+        setAttempts(0);
+        setError("Too many failed attempts. Try again in 10 seconds.");
+      } else {
+        setError(
+          `Invalid credentials. Attempts left: ${MAX_ATTEMPTS - newAttempts}`,
+        );
+      }
+      return;
+    }
+
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      setStep("otp");
+      setSuccess("OTP sent to your email (Use 123456)");
+    }, 1500);
+  };
+
+  const handleOTPVerify = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (otp !== "123456") {
+      setError("Invalid OTP.");
       return;
     }
 
@@ -49,105 +76,116 @@ const Login: React.FC = () => {
     setTimeout(() => {
       setLoading(false);
 
-      if (email === "admin@gmail.com" && password === "Admin123") {
-        setSuccess("Admin login successful 🚀 Redirecting...");
-      } else {
-        setSuccess("User login successful 🎉 Redirecting...");
-      }
+      // Simulated JWT token
+      localStorage.setItem("token", "fake-jwt-token-12345");
 
-      setAttempts(0);
+      setSuccess("Authentication successful 🚀 Redirecting...");
     }, 1500);
   };
 
   return (
-    <div
-      className={`min-h-screen flex items-center justify-center transition-all duration-300 ${
-        darkMode
-          ? "bg-gray-900 text-white"
-          : "bg-gradient-to-br from-indigo-100 to-blue-200"
-      }`}
-    >
-      <div
-        className={`p-8 rounded-2xl shadow-2xl w-full max-w-md ${
-          darkMode ? "bg-gray-800" : "bg-white"
-        }`}
-      >
-        {/* Dark Mode Toggle */}
-        <div className="flex justify-end mb-2">
-          <button onClick={() => setDarkMode(!darkMode)}>
-            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-200 to-blue-300">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md transition-all">
+        <h2 className="text-3xl font-bold text-center mb-6">
+          {step === "login" ? "Secure Login" : "Verify OTP"}
+        </h2>
 
-        <h2 className="text-3xl font-bold text-center mb-6">Secure Login</h2>
-
-        <form onSubmit={handleLogin} className="space-y-5">
-          {/* Email */}
-          <div>
-            <label className="block mb-1 font-medium">Email</label>
-            <input
-              type="email"
-              value={email}
-              disabled={locked}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none text-black"
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block mb-1 font-medium">Password</label>
-            <div className="relative">
+        {step === "login" && (
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label className="block mb-1 font-medium">Email</label>
               <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                disabled={locked}
-                onKeyUp={handleCapsLock}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none text-black"
+                type="email"
+                value={email}
+                disabled={cooldown > 0}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
               />
-              <button
-                type="button"
-                className="absolute right-3 top-2 text-indigo-500"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
             </div>
 
-            {capsLock && (
-              <p className="text-yellow-500 text-sm mt-1">⚠ Caps Lock is ON</p>
+            <div>
+              <label className="block mb-1 font-medium">Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  disabled={cooldown > 0}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-2 text-indigo-600"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            {cooldown > 0 && (
+              <p className="text-yellow-600 text-sm">
+                Try again in {cooldown} seconds
+              </p>
             )}
-          </div>
 
-          {/* Error */}
-          {error && (
-            <div className="bg-red-100 text-red-600 p-2 rounded-md text-sm">
-              {error}
+            {error && (
+              <div className="bg-red-100 text-red-600 p-2 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="bg-green-100 text-green-600 p-2 rounded-md text-sm">
+                {success}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading || cooldown > 0}
+              className="w-full py-2 rounded-lg bg-indigo-600 text-white font-semibold flex justify-center items-center gap-2"
+            >
+              {loading && <Loader2 className="animate-spin" size={18} />}
+              {loading ? "Authenticating..." : "Login"}
+            </button>
+          </form>
+        )}
+
+        {step === "otp" && (
+          <form onSubmit={handleOTPVerify} className="space-y-5">
+            <div>
+              <label className="block mb-1 font-medium">Enter OTP</label>
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
+              />
             </div>
-          )}
 
-          {/* Success */}
-          {success && (
-            <div className="bg-green-100 text-green-600 p-2 rounded-md text-sm">
-              {success}
-            </div>
-          )}
+            {error && (
+              <div className="bg-red-100 text-red-600 p-2 rounded-md text-sm">
+                {error}
+              </div>
+            )}
 
-          {/* Button */}
-          <button
-            type="submit"
-            disabled={loading || locked}
-            className={`w-full py-2 rounded-lg font-semibold flex items-center justify-center gap-2 transition ${
-              loading || locked
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 text-white"
-            }`}
-          >
-            {loading && <Loader2 className="animate-spin" size={18} />}
-            {loading ? "Authenticating..." : "Login"}
-          </button>
-        </form>
+            {success && (
+              <div className="bg-green-100 text-green-600 p-2 rounded-md text-sm">
+                {success}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2 rounded-lg bg-green-600 text-white font-semibold flex justify-center items-center gap-2"
+            >
+              {loading && <Loader2 className="animate-spin" size={18} />}
+              {loading ? "Verifying..." : "Verify OTP"}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
