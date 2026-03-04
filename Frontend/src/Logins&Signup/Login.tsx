@@ -1,177 +1,135 @@
 import React, { useState, useEffect } from "react";
+import { Eye, EyeOff, Loader2, Moon, Sun } from "lucide-react";
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [capsLock, setCapsLock] = useState(false);
 
-  const [emailError, setEmailError] = useState<string>("");
-  const [passwordError, setPasswordError] = useState<string>("");
-  const [success, setSuccess] = useState<string>("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [attempts, setAttempts] = useState(0);
+  const [locked, setLocked] = useState(false);
 
-  const [passwordStrength, setPasswordStrength] = useState<string>("");
+  const MAX_ATTEMPTS = 3;
 
-  // Load remembered email
   useEffect(() => {
-    const savedEmail = localStorage.getItem("rememberedEmail");
-    if (savedEmail) {
-      setEmail(savedEmail);
-      setRememberMe(true);
+    if (attempts >= MAX_ATTEMPTS) {
+      setLocked(true);
+      setError("Account locked due to multiple failed attempts.");
     }
-  }, []);
+  }, [attempts]);
 
-  // Email validation
-  const validateEmail = (value: string) => {
-    if (!/\S+@\S+\.\S+/.test(value)) {
-      setEmailError("Invalid email format.");
-      return false;
-    }
-    setEmailError("");
-    return true;
+  const handleCapsLock = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    setCapsLock(e.getModifierState("CapsLock"));
   };
 
-  // Password validation + strength
-  const validatePassword = (value: string) => {
-    if (value.length < 6) {
-      setPasswordError("Minimum 6 characters required.");
-      setPasswordStrength("Weak");
-      return false;
-    }
-
-    const strong = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/;
-
-    if (strong.test(value)) {
-      setPasswordStrength("Strong");
-    } else if (value.length >= 6) {
-      setPasswordStrength("Medium");
-    }
-
-    setPasswordError("");
-    return true;
-  };
+  const validateEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
     setSuccess("");
 
-    const validEmail = validateEmail(email);
-    const validPassword = validatePassword(password);
+    if (locked) return;
 
-    if (!validEmail || !validPassword) return;
+    if (!validateEmail(email) || password.length < 6) {
+      setAttempts((prev) => prev + 1);
+      setError(
+        `Invalid credentials. Attempts left: ${MAX_ATTEMPTS - attempts - 1}`,
+      );
+      return;
+    }
 
     setLoading(true);
 
     setTimeout(() => {
       setLoading(false);
-      setSuccess("Login Successful 🎉");
 
-      if (rememberMe) {
-        localStorage.setItem("rememberedEmail", email);
+      if (email === "admin@gmail.com" && password === "Admin123") {
+        setSuccess("Admin login successful 🚀 Redirecting...");
       } else {
-        localStorage.removeItem("rememberedEmail");
+        setSuccess("User login successful 🎉 Redirecting...");
       }
 
-      setTimeout(() => {
-        setSuccess("");
-      }, 2000);
-    }, 1200);
+      setAttempts(0);
+    }, 1500);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-blue-200">
-      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md transition-all duration-300">
-        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
-          Login to Your Account
-        </h2>
+    <div
+      className={`min-h-screen flex items-center justify-center transition-all duration-300 ${
+        darkMode
+          ? "bg-gray-900 text-white"
+          : "bg-gradient-to-br from-indigo-100 to-blue-200"
+      }`}
+    >
+      <div
+        className={`p-8 rounded-2xl shadow-2xl w-full max-w-md ${
+          darkMode ? "bg-gray-800" : "bg-white"
+        }`}
+      >
+        {/* Dark Mode Toggle */}
+        <div className="flex justify-end mb-2">
+          <button onClick={() => setDarkMode(!darkMode)}>
+            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+        </div>
+
+        <h2 className="text-3xl font-bold text-center mb-6">Secure Login</h2>
 
         <form onSubmit={handleLogin} className="space-y-5">
           {/* Email */}
           <div>
-            <label className="block mb-1 font-medium text-gray-600">
-              Email
-            </label>
+            <label className="block mb-1 font-medium">Email</label>
             <input
               type="email"
-              placeholder="example@gmail.com"
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                validateEmail(e.target.value);
-              }}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
+              disabled={locked}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none text-black"
             />
-            {emailError && (
-              <p className="text-red-500 text-sm mt-1">{emailError}</p>
-            )}
           </div>
 
           {/* Password */}
           <div>
-            <label className="block mb-1 font-medium text-gray-600">
-              Password
-            </label>
+            <label className="block mb-1 font-medium">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  validatePassword(e.target.value);
-                }}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
+                disabled={locked}
+                onKeyUp={handleCapsLock}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none text-black"
               />
               <button
                 type="button"
+                className="absolute right-3 top-2 text-indigo-500"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2 text-sm text-indigo-500"
               >
-                {showPassword ? "Hide" : "Show"}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
 
-            {/* Password Strength */}
-            {password && (
-              <p
-                className={`text-sm mt-1 ${
-                  passwordStrength === "Strong"
-                    ? "text-green-600"
-                    : passwordStrength === "Medium"
-                      ? "text-yellow-600"
-                      : "text-red-500"
-                }`}
-              >
-                Strength: {passwordStrength}
-              </p>
-            )}
-
-            {passwordError && (
-              <p className="text-red-500 text-sm">{passwordError}</p>
+            {capsLock && (
+              <p className="text-yellow-500 text-sm mt-1">⚠ Caps Lock is ON</p>
             )}
           </div>
 
-          {/* Remember Me */}
-          <div className="flex justify-between items-center text-sm">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-                className="accent-indigo-500"
-              />
-              <span>Remember Me</span>
-            </label>
+          {/* Error */}
+          {error && (
+            <div className="bg-red-100 text-red-600 p-2 rounded-md text-sm">
+              {error}
+            </div>
+          )}
 
-            <a href="#" className="text-indigo-600 hover:underline">
-              Forgot Password?
-            </a>
-          </div>
-
-          {/* Success Message */}
+          {/* Success */}
           {success && (
-            <div className="bg-green-100 text-green-700 p-2 rounded-md text-sm">
+            <div className="bg-green-100 text-green-600 p-2 rounded-md text-sm">
               {success}
             </div>
           )}
@@ -179,23 +137,17 @@ const Login: React.FC = () => {
           {/* Button */}
           <button
             type="submit"
-            disabled={loading}
-            className={`w-full py-2 rounded-lg text-white font-semibold transition-all duration-300 ${
-              loading
-                ? "bg-indigo-300 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 hover:scale-105"
+            disabled={loading || locked}
+            className={`w-full py-2 rounded-lg font-semibold flex items-center justify-center gap-2 transition ${
+              loading || locked
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700 text-white"
             }`}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading && <Loader2 className="animate-spin" size={18} />}
+            {loading ? "Authenticating..." : "Login"}
           </button>
         </form>
-
-        <p className="text-center text-sm text-gray-500 mt-6">
-          Don't have an account?{" "}
-          <a href="#" className="text-indigo-600 hover:underline">
-            Sign Up
-          </a>
-        </p>
       </div>
     </div>
   );
