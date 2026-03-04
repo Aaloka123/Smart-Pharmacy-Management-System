@@ -27,14 +27,23 @@ const Login: React.FC = () => {
       return;
     }
 
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
     setLoading(true);
 
     // Simulated API call
     setTimeout(() => {
       setLoading(false);
-      setSuccess("Login successful!");
+      setSuccess("Login successful! Redirecting...");
       setEmail("");
       setPassword("");
+
+      setTimeout(() => {
+        setSuccess("");
+      }, 2000);
     }, 1000);
   };
 
@@ -48,29 +57,37 @@ const Login: React.FC = () => {
         <form onSubmit={handleLogin} className="space-y-4">
           {/* Email */}
           <div>
-            <label className="block mb-1 font-medium">Email</label>
+            <label htmlFor="email" className="block mb-1 font-medium">
+              Email
+            </label>
             <input
+              id="email"
               type="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setEmail(e.target.value)
-              }
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError("");
+              }}
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
             />
           </div>
 
           {/* Password */}
           <div>
-            <label className="block mb-1 font-medium">Password</label>
+            <label htmlFor="password" className="block mb-1 font-medium">
+              Password
+            </label>
             <div className="relative">
               <input
+                id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setPassword(e.target.value)
-                }
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError("");
+                }}
                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               />
               <button
