@@ -28,8 +28,8 @@ const ManageAdmins: React.FC = () => {
             className="flex items-center justify-between bg-white p-4 mb-4 border rounded-lg shadow-sm hover:shadow-md transition"
           >
             <div>
-              <h2>{admin.name}</h2>
-              <p className="text-gray-500">{admin.email}</p>
+              <h2 className="font-semibold text-gray-800">{admin.name}</h2>
+              <p className="text-sm text-gray-500">{admin.email}</p>
             </div>
 
             <button
