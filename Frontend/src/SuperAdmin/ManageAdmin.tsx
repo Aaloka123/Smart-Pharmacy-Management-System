@@ -34,9 +34,9 @@ const ManageAdmins: React.FC = () => {
 
             <button
               onClick={() => removeAdmin(admin.id)}
-              className="text-red-500"
+              className="text-red-500 hover:bg-red-100 p-2 rounded transition"
             >
-              <Trash2 />
+              <Trash2 size={18} />
             </button>
           </div>
         ))}
