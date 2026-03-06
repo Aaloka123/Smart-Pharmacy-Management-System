@@ -2,34 +2,55 @@ import React from "react";
 import { Users, Pill, Store, BarChart3 } from "lucide-react";
 
 const Dashboard: React.FC = () => {
+  const cards = [
+    {
+      title: "Total Admins",
+      value: "12",
+      icon: <Users size={30} />,
+      color: "from-blue-500 to-blue-600",
+    },
+    {
+      title: "Pharmacies",
+      value: "8",
+      icon: <Store size={30} />,
+      color: "from-green-500 to-green-600",
+    },
+    {
+      title: "Medicines",
+      value: "320",
+      icon: <Pill size={30} />,
+      color: "from-purple-500 to-purple-600",
+    },
+    {
+      title: "Total Sales",
+      value: "Rs 150K",
+      icon: <BarChart3 size={30} />,
+      color: "from-orange-500 to-orange-600",
+    },
+  ];
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Super Admin Dashboard</h1>
+    <div className="p-8 bg-gray-100 min-h-screen">
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">
+        Super Admin Dashboard
+      </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-blue-500 text-white p-6 rounded-xl shadow">
-          <Users size={32} />
-          <h2 className="text-lg mt-2">Total Admins</h2>
-          <p className="text-2xl font-bold">12</p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {cards.map((card, index) => (
+          <div
+            key={index}
+            className={`bg-gradient-to-r ${card.color} text-white p-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300`}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm opacity-90">{card.title}</p>
+                <h2 className="text-3xl font-bold mt-2">{card.value}</h2>
+              </div>
 
-        <div className="bg-green-500 text-white p-6 rounded-xl shadow">
-          <Store size={32} />
-          <h2 className="text-lg mt-2">Pharmacies</h2>
-          <p className="text-2xl font-bold">8</p>
-        </div>
-
-        <div className="bg-purple-500 text-white p-6 rounded-xl shadow">
-          <Pill size={32} />
-          <h2 className="text-lg mt-2">Medicines</h2>
-          <p className="text-2xl font-bold">320</p>
-        </div>
-
-        <div className="bg-orange-500 text-white p-6 rounded-xl shadow">
-          <BarChart3 size={32} />
-          <h2 className="text-lg mt-2">Sales</h2>
-          <p className="text-2xl font-bold">Rs 150K</p>
-        </div>
+              <div className="bg-white/20 p-3 rounded-full">{card.icon}</div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
