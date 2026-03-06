@@ -25,7 +25,7 @@ const ManageAdmins: React.FC = () => {
         {admins.map((admin) => (
           <div
             key={admin.id}
-            className="flex justify-between bg-white p-4 mb-3 shadow rounded"
+            className="flex items-center justify-between bg-white p-4 mb-4 border rounded-lg shadow-sm hover:shadow-md transition"
           >
             <div>
               <h2>{admin.name}</h2>
