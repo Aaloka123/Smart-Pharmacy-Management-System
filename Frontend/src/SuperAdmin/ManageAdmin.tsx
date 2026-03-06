@@ -41,7 +41,7 @@ const ManageAdmins: React.FC = () => {
           </div>
         ))}
 
-        <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2">
+        <button className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg flex items-center gap-2 transition">
           <Plus size={18} /> Add Admin
         </button>
       </div>
