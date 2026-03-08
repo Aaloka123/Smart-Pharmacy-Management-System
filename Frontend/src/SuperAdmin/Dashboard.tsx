@@ -32,14 +32,14 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
+    <div className="p-10 bg-gray-100 min-h-screen">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">
+        <h1 className="text-4xl font-bold text-gray-800">
           Super Admin Dashboard
         </h1>
 
-        <p className="text-gray-500 mt-1">
+        <p className="text-gray-500 mt-2">
           Monitor pharmacies, medicines and sales overview
         </p>
 
@@ -51,8 +51,9 @@ const Dashboard: React.FC = () => {
         {cards.map((card, index) => (
           <div
             key={index}
-            className={`bg-gradient-to-r ${card.color} text-white p-6 rounded-xl shadow-lg 
+            className={`bg-gradient-to-r ${card.color} text-white p-6 rounded-2xl shadow-lg 
             hover:shadow-2xl hover:ring-2 hover:ring-white/40 
+            hover:brightness-110
             transform hover:-translate-y-1 hover:scale-105 
             transition-all duration-300`}
           >
@@ -68,8 +69,11 @@ const Dashboard: React.FC = () => {
         ))}
       </div>
 
+      {/* Divider */}
+      <div className="border-t mt-10 pt-4"></div>
+
       {/* Footer */}
-      <div className="mt-10 text-sm text-gray-500">
+      <div className="text-sm text-gray-500">
         Last updated: {new Date().toLocaleTimeString()}
       </div>
     </div>
