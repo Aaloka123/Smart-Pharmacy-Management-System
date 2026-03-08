@@ -2,6 +2,8 @@ import React from "react";
 import { Users, Pill, Store, BarChart3 } from "lucide-react";
 
 const Dashboard: React.FC = () => {
+  const today = new Date().toLocaleDateString();
+
   const cards = [
     {
       title: "Total Admins",
@@ -31,15 +33,28 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">
-        Super Admin Dashboard
-      </h1>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">
+          Super Admin Dashboard
+        </h1>
 
+        <p className="text-gray-500 mt-1">
+          Monitor pharmacies, medicines and sales overview
+        </p>
+
+        <p className="text-sm text-gray-400 mt-1">Today: {today}</p>
+      </div>
+
+      {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {cards.map((card, index) => (
           <div
             key={index}
-            className={`bg-gradient-to-r ${card.color} text-white p-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300`}
+            className={`bg-gradient-to-r ${card.color} text-white p-6 rounded-xl shadow-lg 
+            hover:shadow-2xl hover:ring-2 hover:ring-white/40 
+            transform hover:-translate-y-1 hover:scale-105 
+            transition-all duration-300`}
           >
             <div className="flex justify-between items-center">
               <div>
@@ -51,6 +66,11 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Footer */}
+      <div className="mt-10 text-sm text-gray-500">
+        Last updated: {new Date().toLocaleTimeString()}
       </div>
     </div>
   );
