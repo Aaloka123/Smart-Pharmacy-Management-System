@@ -47,23 +47,25 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {cards.map((card, index) => (
           <div
             key={index}
-            className={`bg-gradient-to-r ${card.color} text-white p-6 rounded-2xl shadow-lg 
+            className={`bg-gradient-to-r ${card.color} bg-opacity-90 text-white p-6 rounded-2xl shadow-lg 
             hover:shadow-2xl hover:ring-2 hover:ring-white/40 
             hover:brightness-110
             transform hover:-translate-y-1 hover:scale-105 
             transition-all duration-300`}
           >
             <div className="flex justify-between items-center">
-              <div>
+              <div className="text-left">
                 <p className="text-sm opacity-90">{card.title}</p>
                 <h2 className="text-3xl font-bold mt-2">{card.value}</h2>
               </div>
 
-              <div className="bg-white/20 p-3 rounded-full">{card.icon}</div>
+              <div className="bg-white/20 p-3 rounded-full transform hover:scale-110 transition">
+                {card.icon}
+              </div>
             </div>
           </div>
         ))}
@@ -73,7 +75,7 @@ const Dashboard: React.FC = () => {
       <div className="border-t mt-10 pt-4"></div>
 
       {/* Footer */}
-      <div className="text-sm text-gray-500">
+      <div className="text-sm text-gray-600">
         Last updated: {new Date().toLocaleTimeString()}
       </div>
     </div>
