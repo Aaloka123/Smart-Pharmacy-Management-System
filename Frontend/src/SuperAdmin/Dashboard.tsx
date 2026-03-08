@@ -34,36 +34,46 @@ const Dashboard: React.FC = () => {
   return (
     <div className="p-10 bg-gray-100 min-h-screen">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-4xl font-bold text-gray-800">
           Super Admin Dashboard
         </h1>
 
-        <p className="text-gray-500 mt-2">
-          Monitor pharmacies, medicines and sales overview
+        <p className="text-gray-500 mt-1">
+          Welcome back! Here is the overview of your pharmacy system.
         </p>
 
         <p className="text-sm text-gray-400 mt-1">Today: {today}</p>
       </div>
+
+      {/* Section Title */}
+      <h2 className="text-xl font-semibold text-gray-700 mb-4">
+        System Statistics
+      </h2>
 
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {cards.map((card, index) => (
           <div
             key={index}
-            className={`bg-gradient-to-r ${card.color} bg-opacity-90 text-white p-6 rounded-2xl shadow-lg 
+            className={`bg-gradient-to-r ${card.color} text-white p-6 rounded-2xl shadow-lg 
             hover:shadow-2xl hover:ring-2 hover:ring-white/40 
             hover:brightness-110
             transform hover:-translate-y-1 hover:scale-105 
             transition-all duration-300`}
           >
-            <div className="flex justify-between items-center">
-              <div className="text-left">
+            <div className="flex justify-between items-start">
+              <div>
                 <p className="text-sm opacity-90">{card.title}</p>
                 <h2 className="text-3xl font-bold mt-2">{card.value}</h2>
+
+                {/* Status badge */}
+                <span className="text-xs bg-white/20 px-2 py-1 rounded mt-2 inline-block">
+                  Active
+                </span>
               </div>
 
-              <div className="bg-white/20 p-3 rounded-full transform hover:scale-110 transition">
+              <div className="bg-white/20 p-3 rounded-full hover:bg-white/30 transition">
                 {card.icon}
               </div>
             </div>
@@ -75,8 +85,9 @@ const Dashboard: React.FC = () => {
       <div className="border-t mt-10 pt-4"></div>
 
       {/* Footer */}
-      <div className="text-sm text-gray-600">
-        Last updated: {new Date().toLocaleTimeString()}
+      <div className="text-sm text-gray-600 flex justify-between">
+        <span>Last updated: {new Date().toLocaleTimeString()}</span>
+        <span>Dashboard v1.2</span>
       </div>
     </div>
   );
