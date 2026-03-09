@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Trash2, Plus, Mail } from "lucide-react";
+import { Trash2, Plus, Mail, X } from "lucide-react";
 
 interface Admin {
   id: number;
@@ -30,31 +30,47 @@ const ManageAdmins: React.FC = () => {
       admin.email.toLowerCase().includes(search.toLowerCase()),
   );
 
+  const clearSearch = () => {
+    setSearch("");
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Manage Admins</h1>
+        <hr className="mb-6 border-gray-300" />
 
         <p className="text-gray-600 mb-4">
           Total Admins: <span className="font-semibold">{admins.length}</span>
         </p>
 
-        <input
-          type="text"
-          placeholder="Search admins..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full mb-6 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
+        <div className="relative mb-6">
+          <input
+            type="text"
+            placeholder="Search admin by name or email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+
+          {search && (
+            <button
+              onClick={clearSearch}
+              className="absolute right-3 top-2 text-gray-500 hover:text-red-500"
+            >
+              <X size={18} />
+            </button>
+          )}
+        </div>
 
         {filteredAdmins.map((admin) => (
           <div
             key={admin.id}
-            className="flex items-center justify-between bg-white p-4 mb-4 border rounded-lg shadow-sm"
+            className="flex items-center justify-between bg-white p-4 mb-4 border rounded-lg shadow-sm hover:bg-blue-50 transition"
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-semibold">
-                {admin.name.charAt(0)}
+                {admin.name.charAt(0).toUpperCase()}
               </div>
 
               <div>
@@ -82,6 +98,10 @@ const ManageAdmins: React.FC = () => {
             Add Admin
           </button>
         </div>
+
+        <p className="text-center text-sm text-gray-400 mt-8">
+          Pharmacy Management System • Super Admin Panel
+        </p>
       </div>
     </div>
   );
