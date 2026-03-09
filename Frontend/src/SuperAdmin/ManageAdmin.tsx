@@ -35,8 +35,12 @@ const ManageAdmins: React.FC = () => {
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Manage Admins</h1>
 
-        <p className="text-gray-600 mb-4">
+        <p className="text-gray-600 mb-2">
           Total Admins: <span className="font-semibold">{admins.length}</span>
+        </p>
+
+        <p className="text-sm text-gray-500 mb-4">
+          Showing {filteredAdmins.length} of {admins.length} admins
         </p>
 
         <input
@@ -63,12 +67,7 @@ const ManageAdmins: React.FC = () => {
                 </div>
 
                 <div>
-                  <h2 className="font-semibold text-gray-800">
-                    {admin.name}
-                    <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">
-                      ID: {admin.id}
-                    </span>
-                  </h2>
+                  <h2 className="font-semibold text-gray-800">{admin.name}</h2>
                   <p className="text-sm text-gray-500">{admin.email}</p>
                 </div>
               </div>
