@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Plus, Trash2, Printer } from "lucide-react";
+import { Plus, Trash2, Printer, RotateCcw } from "lucide-react";
 
 interface Item {
   name: string;
@@ -18,18 +18,26 @@ const medicineData: { name: string; price: number }[] = [
 const NewSale: React.FC = () => {
   const [customer, setCustomer] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState(""); // NEW
+  const [search, setSearch] = useState(""); // NEW
   const [discountEnabled, setDiscountEnabled] = useState(false);
+
   const [items, setItems] = useState<Item[]>([
     { name: "", price: 0, quantity: 1 },
   ]);
 
-  // Better invoice number (includes year)
+  // Improved invoice number
   const invoiceNumber = useMemo(() => {
     const year = new Date().getFullYear();
-    return `INV-${year}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const time = Date.now().toString().slice(-4);
+    return `INV-${year}-${time}`;
   }, []);
 
   const today = new Date().toLocaleDateString();
+
+  const filteredMedicines = medicineData.filter((med) =>
+    med.name.toLowerCase().includes(search.toLowerCase()),
+  );
 
   const handleItemChange = (
     index: number,
@@ -78,6 +86,8 @@ const NewSale: React.FC = () => {
   const clearInvoice = () => {
     setCustomer("");
     setEmail("");
+    setPhone("");
+    setSearch("");
     setDiscountEnabled(false);
     setItems([{ name: "", price: 0, quantity: 1 }]);
   };
@@ -139,7 +149,20 @@ const NewSale: React.FC = () => {
             />
           </div>
 
-          {/* Discount Toggle */}
+          {/* NEW Phone */}
+          <div>
+            <label className="block text-sm font-semibold mb-2">
+              Customer Phone
+            </label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full p-3 border rounded-xl"
+            />
+          </div>
+
+          {/* Discount */}
           <div className="flex items-center gap-3">
             <input
               type="checkbox"
@@ -149,7 +172,19 @@ const NewSale: React.FC = () => {
             <span className="text-sm font-medium">Apply 5% Discount</span>
           </div>
 
-          {/* Items */}
+          {/* Medicine Search */}
+          <div>
+            <label className="text-sm font-semibold">Search Medicine</label>
+            <input
+              type="text"
+              placeholder="Type medicine name..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full p-3 border rounded-xl mt-1"
+            />
+          </div>
+
+          {/* Items Table */}
           <div>
             <h2 className="text-xl font-semibold mb-4">
               Invoice Items ({totalItems} items)
@@ -165,6 +200,7 @@ const NewSale: React.FC = () => {
                   <th></th>
                 </tr>
               </thead>
+
               <tbody>
                 {items.map((item, index) => (
                   <tr key={index} className="border-t hover:bg-gray-50">
@@ -178,7 +214,7 @@ const NewSale: React.FC = () => {
                         className="w-full p-2 border rounded-lg"
                       >
                         <option value="">Select Medicine</option>
-                        {medicineData.map((med) => (
+                        {filteredMedicines.map((med) => (
                           <option key={med.name} value={med.name}>
                             {med.name}
                           </option>
@@ -235,18 +271,22 @@ const NewSale: React.FC = () => {
               <span>Subtotal</span>
               <span>Rs {subtotal.toFixed(2)}</span>
             </div>
+
             <div className="flex justify-between">
               <span>VAT (13%)</span>
               <span>Rs {tax.toFixed(2)}</span>
             </div>
+
             {discountEnabled && (
               <div className="flex justify-between text-red-600">
                 <span>Discount (5%)</span>
                 <span>- Rs {discount.toFixed(2)}</span>
               </div>
             )}
-            <div className="flex justify-between text-xl font-bold text-green-700 border-t pt-3">
-              <span>Net Total</span>
+
+            {/* Highlight Total */}
+            <div className="flex justify-between text-2xl font-bold text-green-700 border-t pt-3">
+              <span>Grand Total</span>
               <span>Rs {total.toFixed(2)}</span>
             </div>
           </div>
@@ -255,7 +295,7 @@ const NewSale: React.FC = () => {
           <div className="flex gap-4">
             <button
               type="submit"
-              className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition"
+              className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700"
             >
               Generate Invoice
             </button>
@@ -266,6 +306,15 @@ const NewSale: React.FC = () => {
               className="flex-1 bg-gray-300 py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
             >
               <Printer size={18} /> Print
+            </button>
+
+            {/* NEW Clear Button */}
+            <button
+              type="button"
+              onClick={clearInvoice}
+              className="flex-1 bg-red-500 text-white py-3 rounded-xl flex items-center justify-center gap-2"
+            >
+              <RotateCcw size={18} /> Clear
             </button>
           </div>
         </form>
