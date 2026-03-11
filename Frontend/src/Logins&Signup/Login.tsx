@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Eye, EyeOff, Loader2, RefreshCcw } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 const Login: React.FC = () => {
   const [step, setStep] = useState<"login" | "otp">("login");
@@ -7,8 +7,6 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
-
-  const [rememberMe, setRememberMe] = useState(false); // NEW
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -19,7 +17,7 @@ const Login: React.FC = () => {
   const [attempts, setAttempts] = useState(0);
   const [cooldown, setCooldown] = useState(0);
 
-  const [resendTimer, setResendTimer] = useState(10); // NEW
+  const otpInputRef = useRef<HTMLInputElement>(null); // NEW
 
   const MAX_ATTEMPTS = 3;
 
@@ -31,24 +29,12 @@ const Login: React.FC = () => {
     }
   }, [cooldown]);
 
-  // OTP resend timer
+  // Auto focus OTP
   useEffect(() => {
-    if (resendTimer > 0 && step === "otp") {
-      const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
-      return () => clearTimeout(timer);
+    if (step === "otp" && otpInputRef.current) {
+      otpInputRef.current.focus();
     }
-  }, [resendTimer, step]);
-
-  // Auto clear messages
-  useEffect(() => {
-    if (error || success) {
-      const timer = setTimeout(() => {
-        setError("");
-        setSuccess("");
-      }, 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [error, success]);
+  }, [step]);
 
   const validateEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
 
@@ -81,7 +67,6 @@ const Login: React.FC = () => {
       setLoading(false);
       setStep("otp");
       setSuccess("OTP sent to your email (Use 123456)");
-      setResendTimer(10);
     }, 1500);
   };
 
@@ -101,24 +86,10 @@ const Login: React.FC = () => {
       setLoading(false);
 
       // Simulated JWT token
-      if (rememberMe) {
-        localStorage.setItem("token", "fake-jwt-token-12345");
-      } else {
-        sessionStorage.setItem("token", "fake-jwt-token-12345");
-      }
+      localStorage.setItem("token", "fake-jwt-token-12345");
 
       setSuccess("Authentication successful 🚀 Redirecting...");
-
-      // Simulated redirect
-      setTimeout(() => {
-        window.location.href = "/dashboard";
-      }, 1500);
     }, 1500);
-  };
-
-  const resendOTP = () => {
-    setSuccess("OTP resent successfully!");
-    setResendTimer(10);
   };
 
   return (
@@ -161,22 +132,18 @@ const Login: React.FC = () => {
                 </button>
               </div>
 
-              {password.length > 0 && password.length < 6 && (
-                <p className="text-xs text-gray-500 mt-1">
-                  Password should be at least 6 characters.
-                </p>
-              )}
+              {/* NEW Forgot Password */}
+              <p className="text-sm text-indigo-600 mt-1 cursor-pointer">
+                Forgot Password?
+              </p>
             </div>
 
-            {/* Remember Me */}
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-              />
-              <span className="text-sm">Remember Me</span>
-            </div>
+            {/* Remaining attempts */}
+            {attempts > 0 && cooldown === 0 && (
+              <p className="text-sm text-gray-600">
+                Attempts remaining: {MAX_ATTEMPTS - attempts}
+              </p>
+            )}
 
             {cooldown > 0 && (
               <p className="text-yellow-600 text-sm">
@@ -212,28 +179,13 @@ const Login: React.FC = () => {
             <div>
               <label className="block mb-1 font-medium">Enter OTP</label>
               <input
+                ref={otpInputRef}
                 type="text"
+                maxLength={6}
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
               />
-            </div>
-
-            {/* Resend OTP */}
-            <div className="text-sm">
-              {resendTimer > 0 ? (
-                <p className="text-gray-500">
-                  Resend OTP in {resendTimer} seconds
-                </p>
-              ) : (
-                <button
-                  type="button"
-                  onClick={resendOTP}
-                  className="flex items-center gap-1 text-indigo-600"
-                >
-                  <RefreshCcw size={16} /> Resend OTP
-                </button>
-              )}
             </div>
 
             {error && (
@@ -255,6 +207,15 @@ const Login: React.FC = () => {
             >
               {loading && <Loader2 className="animate-spin" size={18} />}
               {loading ? "Verifying..." : "Verify OTP"}
+            </button>
+
+            {/* NEW Cancel button */}
+            <button
+              type="button"
+              onClick={() => setStep("login")}
+              className="w-full py-2 rounded-lg bg-gray-300 text-gray-700 font-semibold"
+            >
+              Cancel
             </button>
           </form>
         )}
