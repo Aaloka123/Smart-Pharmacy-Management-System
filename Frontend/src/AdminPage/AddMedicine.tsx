@@ -27,10 +27,12 @@ const AddMedicine: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const today = new Date().toISOString().split("T")[0];
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
 
-    // Change 1: batch number auto uppercase
+    // Batch number auto uppercase
     if (e.target.name === "batch") {
       value = value.toUpperCase();
     }
@@ -41,11 +43,21 @@ const AddMedicine: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Trim inputs
+    const cleanedForm = {
+      name: form.name.trim(),
+      batch: form.batch.trim(),
+      quantity: form.quantity,
+      expiry: form.expiry,
+      price: form.price,
+      category: form.category.trim(),
+    };
+
     if (
-      !form.name.trim() ||
-      !form.quantity ||
-      !form.price ||
-      !form.category.trim()
+      !cleanedForm.name ||
+      !cleanedForm.quantity ||
+      !cleanedForm.price ||
+      !cleanedForm.category
     ) {
       return alert("Please fill all required fields including category!");
     }
@@ -118,8 +130,9 @@ const AddMedicine: React.FC = () => {
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Enter medicine name"
-                maxLength={60} // Change 2
+                maxLength={60}
                 required
+                helper="Enter the official medicine name from the package."
               />
 
               <InputField
@@ -129,7 +142,7 @@ const AddMedicine: React.FC = () => {
                 value={form.batch}
                 onChange={handleChange}
                 placeholder="Enter batch number"
-                maxLength={20} // Change 3
+                maxLength={20}
               />
 
               <InputField
@@ -141,6 +154,7 @@ const AddMedicine: React.FC = () => {
                 onChange={handleChange}
                 placeholder="Enter quantity"
                 min="0"
+                max="10000"
                 required
               />
 
@@ -151,6 +165,7 @@ const AddMedicine: React.FC = () => {
                 type="date"
                 value={form.expiry}
                 onChange={handleChange}
+                min={today}
               />
 
               <InputField
@@ -162,7 +177,7 @@ const AddMedicine: React.FC = () => {
                 onChange={handleChange}
                 placeholder="Enter price"
                 min="0"
-                step="0.01" // Change 4
+                step="0.01"
                 required
               />
 
@@ -179,7 +194,7 @@ const AddMedicine: React.FC = () => {
 
             <button
               type="submit"
-              aria-label="Save Medicine" // Change 5
+              aria-label="Save Medicine"
               disabled={loading}
               className={`w-full py-3 rounded-2xl flex items-center justify-center gap-2 font-semibold text-white shadow-lg transition-all duration-300
                 ${
@@ -219,8 +234,10 @@ interface InputProps {
   required?: boolean;
   placeholder?: string;
   min?: string;
+  max?: string;
   maxLength?: number;
   step?: string;
+  helper?: string;
 }
 
 const InputField: React.FC<InputProps> = ({
@@ -233,8 +250,10 @@ const InputField: React.FC<InputProps> = ({
   required = false,
   placeholder = "",
   min,
+  max,
   maxLength,
   step,
+  helper,
 }) => (
   <div>
     <label className="text-sm font-medium text-gray-600">
@@ -249,13 +268,17 @@ const InputField: React.FC<InputProps> = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        autoComplete="off"
         min={min}
+        max={max}
         maxLength={maxLength}
         step={step}
         className="w-full bg-transparent outline-none px-3 text-sm"
         required={required}
       />
     </div>
+
+    {helper && <p className="text-xs text-gray-400 mt-1">{helper}</p>}
   </div>
 );
 
