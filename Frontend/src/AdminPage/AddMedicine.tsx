@@ -28,13 +28,19 @@ const AddMedicine: React.FC = () => {
   const [success, setSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    let value = e.target.value;
+
+    // Change 1: batch number auto uppercase
+    if (e.target.name === "batch") {
+      value = value.toUpperCase();
+    }
+
+    setForm({ ...form, [e.target.name]: value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Change 1: Added category validation
     if (
       !form.name.trim() ||
       !form.quantity ||
@@ -67,10 +73,8 @@ const AddMedicine: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-100 via-gray-100 to-slate-200">
       <Header />
 
-      {/* Change 2: Added max-w-7xl container */}
       <main className="flex-1 w-full px-6 py-12 max-w-7xl mx-auto">
         <div className="max-w-3xl mx-auto space-y-8">
-          {/* Success Toast */}
           {success && (
             <div className="flex items-center gap-3 bg-green-100 text-green-700 px-6 py-3 rounded-xl shadow-md animate-fade-in">
               <CheckCircle size={18} />
@@ -78,7 +82,7 @@ const AddMedicine: React.FC = () => {
             </div>
           )}
 
-          {/* Page Header */}
+          {/* Header */}
           <div className="bg-white rounded-3xl shadow-lg p-6 flex items-center justify-between hover:shadow-xl transition">
             <div className="flex items-center gap-4">
               <div className="p-4 bg-green-100 text-green-600 rounded-2xl">
@@ -104,7 +108,7 @@ const AddMedicine: React.FC = () => {
           {/* Form */}
           <form
             onSubmit={handleSubmit}
-            className="bg-white rounded-3xl shadow-xl p-8 space-y-8 hover:shadow-2xl transition"
+            className="bg-white rounded-3xl shadow-xl p-8 space-y-8 hover:shadow-2xl hover:scale-[1.01] transition-all duration-300"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <InputField
@@ -114,6 +118,7 @@ const AddMedicine: React.FC = () => {
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Enter medicine name"
+                maxLength={60} // Change 2
                 required
               />
 
@@ -124,6 +129,7 @@ const AddMedicine: React.FC = () => {
                 value={form.batch}
                 onChange={handleChange}
                 placeholder="Enter batch number"
+                maxLength={20} // Change 3
               />
 
               <InputField
@@ -134,7 +140,7 @@ const AddMedicine: React.FC = () => {
                 value={form.quantity}
                 onChange={handleChange}
                 placeholder="Enter quantity"
-                min="0" // Change 3
+                min="0"
                 required
               />
 
@@ -155,7 +161,8 @@ const AddMedicine: React.FC = () => {
                 value={form.price}
                 onChange={handleChange}
                 placeholder="Enter price"
-                min="0" // Change 4
+                min="0"
+                step="0.01" // Change 4
                 required
               />
 
@@ -165,14 +172,14 @@ const AddMedicine: React.FC = () => {
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                placeholder="e.g. Antibiotic, Painkiller"
+                placeholder="e.g. Antibiotic"
                 required
               />
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
+              aria-label="Save Medicine" // Change 5
               disabled={loading}
               className={`w-full py-3 rounded-2xl flex items-center justify-center gap-2 font-semibold text-white shadow-lg transition-all duration-300
                 ${
@@ -202,8 +209,6 @@ const AddMedicine: React.FC = () => {
   );
 };
 
-/* ---------- Reusable Input ---------- */
-
 interface InputProps {
   icon: React.ReactNode;
   label: string;
@@ -212,8 +217,10 @@ interface InputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type?: string;
   required?: boolean;
-  placeholder?: string; // Change 5
+  placeholder?: string;
   min?: string;
+  maxLength?: number;
+  step?: string;
 }
 
 const InputField: React.FC<InputProps> = ({
@@ -226,6 +233,8 @@ const InputField: React.FC<InputProps> = ({
   required = false,
   placeholder = "",
   min,
+  maxLength,
+  step,
 }) => (
   <div>
     <label className="text-sm font-medium text-gray-600">
@@ -241,6 +250,8 @@ const InputField: React.FC<InputProps> = ({
         onChange={onChange}
         placeholder={placeholder}
         min={min}
+        maxLength={maxLength}
+        step={step}
         className="w-full bg-transparent outline-none px-3 text-sm"
         required={required}
       />
