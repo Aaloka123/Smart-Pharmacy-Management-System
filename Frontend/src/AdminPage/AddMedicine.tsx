@@ -34,8 +34,14 @@ const AddMedicine: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.name.trim() || !form.quantity || !form.price) {
-      return alert("Please fill all required fields!");
+    // Change 1: Added category validation
+    if (
+      !form.name.trim() ||
+      !form.quantity ||
+      !form.price ||
+      !form.category.trim()
+    ) {
+      return alert("Please fill all required fields including category!");
     }
 
     setLoading(true);
@@ -61,13 +67,14 @@ const AddMedicine: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-100 via-gray-100 to-slate-200">
       <Header />
 
-      <main className="flex-1 w-full px-6 py-12">
+      {/* Change 2: Added max-w-7xl container */}
+      <main className="flex-1 w-full px-6 py-12 max-w-7xl mx-auto">
         <div className="max-w-3xl mx-auto space-y-8">
           {/* Success Toast */}
           {success && (
             <div className="flex items-center gap-3 bg-green-100 text-green-700 px-6 py-3 rounded-xl shadow-md animate-fade-in">
               <CheckCircle size={18} />
-              Medicine added successfully!
+              Medicine successfully added to the inventory!
             </div>
           )}
 
@@ -106,6 +113,7 @@ const AddMedicine: React.FC = () => {
                 name="name"
                 value={form.name}
                 onChange={handleChange}
+                placeholder="Enter medicine name"
                 required
               />
 
@@ -115,6 +123,7 @@ const AddMedicine: React.FC = () => {
                 name="batch"
                 value={form.batch}
                 onChange={handleChange}
+                placeholder="Enter batch number"
               />
 
               <InputField
@@ -124,6 +133,8 @@ const AddMedicine: React.FC = () => {
                 type="number"
                 value={form.quantity}
                 onChange={handleChange}
+                placeholder="Enter quantity"
+                min="0" // Change 3
                 required
               />
 
@@ -143,6 +154,8 @@ const AddMedicine: React.FC = () => {
                 type="number"
                 value={form.price}
                 onChange={handleChange}
+                placeholder="Enter price"
+                min="0" // Change 4
                 required
               />
 
@@ -152,6 +165,8 @@ const AddMedicine: React.FC = () => {
                 name="category"
                 value={form.category}
                 onChange={handleChange}
+                placeholder="e.g. Antibiotic, Painkiller"
+                required
               />
             </div>
 
@@ -197,6 +212,8 @@ interface InputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type?: string;
   required?: boolean;
+  placeholder?: string; // Change 5
+  min?: string;
 }
 
 const InputField: React.FC<InputProps> = ({
@@ -207,6 +224,8 @@ const InputField: React.FC<InputProps> = ({
   onChange,
   type = "text",
   required = false,
+  placeholder = "",
+  min,
 }) => (
   <div>
     <label className="text-sm font-medium text-gray-600">
@@ -220,6 +239,8 @@ const InputField: React.FC<InputProps> = ({
         name={name}
         value={value}
         onChange={onChange}
+        placeholder={placeholder}
+        min={min}
         className="w-full bg-transparent outline-none px-3 text-sm"
         required={required}
       />
