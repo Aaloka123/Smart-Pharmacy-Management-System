@@ -9,6 +9,7 @@ import {
   ArrowLeft,
   Loader2,
   CheckCircle,
+  RotateCcw,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Header from "../UserComponent/Header";
@@ -32,7 +33,6 @@ const AddMedicine: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
 
-    // Batch number auto uppercase
     if (e.target.name === "batch") {
       value = value.toUpperCase();
     }
@@ -43,7 +43,6 @@ const AddMedicine: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Trim inputs
     const cleanedForm = {
       name: form.name.trim(),
       batch: form.batch.trim(),
@@ -59,7 +58,11 @@ const AddMedicine: React.FC = () => {
       !cleanedForm.price ||
       !cleanedForm.category
     ) {
-      return alert("Please fill all required fields including category!");
+      return alert("Please fill all required fields!");
+    }
+
+    if (Number(cleanedForm.price) <= 0) {
+      return alert("Price must be greater than zero.");
     }
 
     setLoading(true);
@@ -81,6 +84,17 @@ const AddMedicine: React.FC = () => {
     }, 1200);
   };
 
+  const handleReset = () => {
+    setForm({
+      name: "",
+      batch: "",
+      quantity: "",
+      expiry: "",
+      price: "",
+      category: "",
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-100 via-gray-100 to-slate-200">
       <Header />
@@ -88,14 +102,14 @@ const AddMedicine: React.FC = () => {
       <main className="flex-1 w-full px-6 py-12 max-w-7xl mx-auto">
         <div className="max-w-3xl mx-auto space-y-8">
           {success && (
-            <div className="flex items-center gap-3 bg-green-100 text-green-700 px-6 py-3 rounded-xl shadow-md animate-fade-in">
+            <div className="flex items-center gap-3 bg-green-100 text-green-700 px-6 py-3 rounded-xl shadow-md">
               <CheckCircle size={18} />
-              Medicine successfully added to the inventory!
+              Medicine successfully added!
             </div>
           )}
 
           {/* Header */}
-          <div className="bg-white rounded-3xl shadow-lg p-6 flex items-center justify-between hover:shadow-xl transition">
+          <div className="bg-white rounded-3xl shadow-lg p-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="p-4 bg-green-100 text-green-600 rounded-2xl">
                 <Pill size={28} />
@@ -120,20 +134,25 @@ const AddMedicine: React.FC = () => {
           {/* Form */}
           <form
             onSubmit={handleSubmit}
-            className="bg-white rounded-3xl shadow-xl p-8 space-y-8 hover:shadow-2xl hover:scale-[1.01] transition-all duration-300"
+            className="bg-white rounded-3xl shadow-xl p-8 space-y-8 focus-within:ring-2 focus-within:ring-green-200 transition"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InputField
-                icon={<Pill />}
-                label="Medicine Name"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="Enter medicine name"
-                maxLength={60}
-                required
-                helper="Enter the official medicine name from the package."
-              />
+              {/* Medicine Name */}
+              <div>
+                <InputField
+                  icon={<Pill />}
+                  label="Medicine Name"
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Enter medicine name"
+                  maxLength={60}
+                  required
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  {form.name.length}/60 characters
+                </p>
+              </div>
 
               <InputField
                 icon={<Hash />}
@@ -152,9 +171,9 @@ const AddMedicine: React.FC = () => {
                 type="number"
                 value={form.quantity}
                 onChange={handleChange}
-                placeholder="Enter quantity"
                 min="0"
                 max="10000"
+                placeholder="Enter quantity"
                 required
               />
 
@@ -181,40 +200,62 @@ const AddMedicine: React.FC = () => {
                 required
               />
 
-              <InputField
-                icon={<Package />}
-                label="Category"
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                placeholder="e.g. Antibiotic"
-                required
-              />
+              {/* Category with suggestion */}
+              <div>
+                <InputField
+                  icon={<Package />}
+                  label="Category"
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  placeholder="Select category"
+                  required
+                />
+                <datalist id="medicineCategories">
+                  <option value="Antibiotic" />
+                  <option value="Painkiller" />
+                  <option value="Vitamin" />
+                  <option value="Antiseptic" />
+                  <option value="Tablet" />
+                  <option value="Syrup" />
+                </datalist>
+              </div>
             </div>
 
-            <button
-              type="submit"
-              aria-label="Save Medicine"
-              disabled={loading}
-              className={`w-full py-3 rounded-2xl flex items-center justify-center gap-2 font-semibold text-white shadow-lg transition-all duration-300
-                ${
-                  loading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-r from-green-500 to-emerald-600 hover:scale-[1.02] active:scale-95"
-                }`}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="animate-spin" size={18} />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save size={18} />
-                  Save Medicine
-                </>
-              )}
-            </button>
+            {/* Buttons */}
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`flex-1 py-3 rounded-2xl flex items-center justify-center gap-2 font-semibold text-white shadow-lg transition
+                  ${
+                    loading
+                      ? "bg-gray-400"
+                      : "bg-gradient-to-r from-green-500 to-emerald-600 hover:scale-[1.02]"
+                  }`}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save size={18} />
+                    Save Medicine
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleReset}
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gray-200 hover:bg-gray-300 transition"
+              >
+                <RotateCcw size={16} />
+                Reset
+              </button>
+            </div>
           </form>
         </div>
       </main>
@@ -237,7 +278,6 @@ interface InputProps {
   max?: string;
   maxLength?: number;
   step?: string;
-  helper?: string;
 }
 
 const InputField: React.FC<InputProps> = ({
@@ -253,14 +293,13 @@ const InputField: React.FC<InputProps> = ({
   max,
   maxLength,
   step,
-  helper,
 }) => (
   <div>
     <label className="text-sm font-medium text-gray-600">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
 
-    <div className="flex items-center mt-2 bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+    <div className="flex items-center mt-2 bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 focus-within:border-green-500 transition">
       <span className="text-gray-400">{icon}</span>
       <input
         type={type}
@@ -277,8 +316,6 @@ const InputField: React.FC<InputProps> = ({
         required={required}
       />
     </div>
-
-    {helper && <p className="text-xs text-gray-400 mt-1">{helper}</p>}
   </div>
 );
 
