@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../UserComponent/Header";
 import Footer from "../UserComponent/Footer";
 import { useNavigate } from "react-router-dom";
@@ -9,9 +9,11 @@ import {
   CheckCircle,
   AlertTriangle,
   RefreshCcw,
+  ArrowLeft,
 } from "lucide-react";
 
 interface MedicineForm {
+  id: string;
   name: string;
   category: string;
   price: string;
@@ -20,13 +22,14 @@ interface MedicineForm {
   supplier: string;
   batch: string;
   manufacturer: string;
-  description: string; // Change 1
+  description: string;
 }
 
 const AddMedicine: React.FC = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState<MedicineForm>({
+    id: "",
     name: "",
     category: "",
     price: "",
@@ -35,21 +38,35 @@ const AddMedicine: React.FC = () => {
     supplier: "",
     batch: "",
     manufacturer: "",
-    description: "", // Change 1
+    description: "",
   });
 
   const [success, setSuccess] = useState(false);
+
+  // Change 4 — Generate medicine ID
+  useEffect(() => {
+    const generatedId = "MED-" + Math.floor(Math.random() * 100000);
+    setForm((prev) => ({ ...prev, id: generatedId }));
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >,
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    let value = e.target.value;
+
+    // Change 1 — Auto capitalize name
+    if (e.target.name === "name") {
+      value = value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    setForm({ ...form, [e.target.name]: value });
   };
 
   const handleReset = () => {
     setForm({
+      ...form,
       name: "",
       category: "",
       price: "",
@@ -89,6 +106,14 @@ const AddMedicine: React.FC = () => {
     });
   };
 
+  // Change 3 — Stock color indicator
+  const stockColor =
+    Number(form.stock) === 0
+      ? "text-red-600"
+      : Number(form.stock) < 10
+        ? "text-yellow-600"
+        : "text-green-600";
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
@@ -96,17 +121,9 @@ const AddMedicine: React.FC = () => {
     setSuccess(true);
 
     setTimeout(() => {
-      handleReset();
       navigate("/medicines");
     }, 1500);
   };
-
-  const stockStatus =
-    Number(form.stock) === 0
-      ? "Out of Stock"
-      : Number(form.stock) < 10
-        ? "Low Stock"
-        : "In Stock";
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-100 to-gray-200">
@@ -118,8 +135,10 @@ const AddMedicine: React.FC = () => {
             <Pill />
             Add New Medicine
           </h1>
-          <p className="text-gray-600 mt-1">
-            Enter product details carefully before saving.
+
+          {/* Change 4 — Show Medicine ID */}
+          <p className="text-gray-500 mt-2">
+            Generated Medicine ID: <b>{form.id}</b>
           </p>
         </div>
 
@@ -142,20 +161,14 @@ const AddMedicine: React.FC = () => {
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                  <input
-                    name="name"
-                    value={form.name}
-                    placeholder="Medicine Name"
-                    onChange={handleChange}
-                    className="border px-4 py-2 rounded-xl w-full"
-                    required
-                  />
-                  {/* Change 3 */}
-                  <p className="text-xs text-gray-400 mt-1">
-                    {form.name.length}/50 characters
-                  </p>
-                </div>
+                <input
+                  name="name"
+                  value={form.name}
+                  placeholder="Medicine Name"
+                  onChange={handleChange}
+                  className="border px-4 py-2 rounded-xl"
+                  required
+                />
 
                 <select
                   name="category"
@@ -182,13 +195,12 @@ const AddMedicine: React.FC = () => {
                 <input
                   name="manufacturer"
                   value={form.manufacturer}
-                  placeholder="Manufacturer Name"
+                  placeholder="Manufacturer"
                   onChange={handleChange}
                   className="border px-4 py-2 rounded-xl"
                 />
               </div>
 
-              {/* Change 1 */}
               <textarea
                 name="description"
                 value={form.description}
@@ -258,7 +270,7 @@ const AddMedicine: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Preview */}
+          {/* Preview */}
           <div className="bg-white rounded-2xl shadow-xl p-6 h-fit sticky top-24">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <CheckCircle className="text-green-600" />
@@ -266,6 +278,9 @@ const AddMedicine: React.FC = () => {
             </h2>
 
             <ul className="text-sm space-y-2 text-gray-600">
+              <li>
+                <b>ID:</b> {form.id}
+              </li>
               <li>
                 <b>Name:</b> {form.name || "—"}
               </li>
@@ -284,11 +299,8 @@ const AddMedicine: React.FC = () => {
               <li>
                 <b>Price:</b> {form.price ? `Rs ${form.price}` : "—"}
               </li>
-              <li>
+              <li className={stockColor}>
                 <b>Stock:</b> {form.stock || "—"}
-              </li>
-              <li>
-                <b>Status:</b> {stockStatus}
               </li>
               <li>
                 <b>Expiry:</b> {formatDate(form.expiry)}
@@ -301,14 +313,14 @@ const AddMedicine: React.FC = () => {
             {isLowStock && (
               <div className="mt-4 flex items-center gap-2 text-yellow-600 text-sm">
                 <AlertTriangle size={16} />
-                Warning: Low stock level!
+                Warning: Low stock!
               </div>
             )}
 
             {isNearExpiry() && (
               <div className="mt-2 flex items-center gap-2 text-red-600 text-sm">
                 <AlertTriangle size={16} />
-                Warning: Expiry within 30 days!
+                Expiry within 30 days!
               </div>
             )}
 
@@ -316,7 +328,7 @@ const AddMedicine: React.FC = () => {
               <button
                 type="submit"
                 disabled={!isFormValid || success}
-                className={`w-full py-3 rounded-xl text-white shadow ${
+                className={`w-full py-3 rounded-xl text-white ${
                   isFormValid
                     ? "bg-blue-600 hover:bg-blue-700"
                     : "bg-gray-400 cursor-not-allowed"
@@ -332,6 +344,16 @@ const AddMedicine: React.FC = () => {
               >
                 <RefreshCcw size={14} />
                 Clear Form
+              </button>
+
+              {/* Change 5 */}
+              <button
+                type="button"
+                onClick={() => navigate("/medicines")}
+                className="w-full flex items-center justify-center gap-2 border py-2 rounded-xl hover:bg-gray-100"
+              >
+                <ArrowLeft size={14} />
+                Cancel
               </button>
             </div>
           </div>
