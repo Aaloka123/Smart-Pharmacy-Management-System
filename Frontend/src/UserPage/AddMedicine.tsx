@@ -20,6 +20,7 @@ interface MedicineForm {
   supplier: string;
   batch: string;
   manufacturer: string;
+  description: string; // Change 1
 }
 
 const AddMedicine: React.FC = () => {
@@ -34,12 +35,15 @@ const AddMedicine: React.FC = () => {
     supplier: "",
     batch: "",
     manufacturer: "",
+    description: "", // Change 1
   });
 
   const [success, setSuccess] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -54,6 +58,7 @@ const AddMedicine: React.FC = () => {
       supplier: "",
       batch: "",
       manufacturer: "",
+      description: "",
     });
   };
 
@@ -75,6 +80,15 @@ const AddMedicine: React.FC = () => {
     return diffDays <= 30;
   };
 
+  const formatDate = (date: string) => {
+    if (!date) return "—";
+    return new Date(date).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
@@ -87,12 +101,18 @@ const AddMedicine: React.FC = () => {
     }, 1500);
   };
 
+  const stockStatus =
+    Number(form.stock) === 0
+      ? "Out of Stock"
+      : Number(form.stock) < 10
+        ? "Low Stock"
+        : "In Stock";
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-100 to-gray-200">
       <Header />
 
       <main className="flex-grow p-6 max-w-6xl mx-auto w-full">
-        {/* Page Header */}
         <div className="bg-white rounded-2xl p-6 shadow mb-6">
           <h1 className="text-3xl font-bold flex items-center gap-3 text-blue-600">
             <Pill />
@@ -106,7 +126,7 @@ const AddMedicine: React.FC = () => {
         {success && (
           <div className="bg-green-100 text-green-700 p-4 rounded-xl mb-6 flex items-center gap-2">
             <CheckCircle size={18} />
-            Medicine added successfully and inventory updated!
+            Medicine added successfully!
           </div>
         )}
 
@@ -114,7 +134,6 @@ const AddMedicine: React.FC = () => {
           onSubmit={handleSubmit}
           className="grid grid-cols-1 lg:grid-cols-3 gap-6"
         >
-          {/* Left Section */}
           <div className="lg:col-span-2 space-y-6">
             {/* Basic Info */}
             <div className="bg-white rounded-2xl shadow p-6">
@@ -123,20 +142,26 @@ const AddMedicine: React.FC = () => {
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <input
-                  name="name"
-                  value={form.name}
-                  placeholder="Medicine Name"
-                  onChange={handleChange}
-                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                  required
-                />
+                <div>
+                  <input
+                    name="name"
+                    value={form.name}
+                    placeholder="Medicine Name"
+                    onChange={handleChange}
+                    className="border px-4 py-2 rounded-xl w-full"
+                    required
+                  />
+                  {/* Change 3 */}
+                  <p className="text-xs text-gray-400 mt-1">
+                    {form.name.length}/50 characters
+                  </p>
+                </div>
 
                 <select
                   name="category"
                   value={form.category}
                   onChange={handleChange}
-                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="border px-4 py-2 rounded-xl"
                   required
                 >
                   <option value="">Select Category</option>
@@ -151,7 +176,7 @@ const AddMedicine: React.FC = () => {
                   value={form.batch}
                   placeholder="Batch Number"
                   onChange={handleChange}
-                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="border px-4 py-2 rounded-xl"
                 />
 
                 <input
@@ -159,9 +184,19 @@ const AddMedicine: React.FC = () => {
                   value={form.manufacturer}
                   placeholder="Manufacturer Name"
                   onChange={handleChange}
-                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="border px-4 py-2 rounded-xl"
                 />
               </div>
+
+              {/* Change 1 */}
+              <textarea
+                name="description"
+                value={form.description}
+                placeholder="Medicine Description"
+                onChange={handleChange}
+                className="border px-4 py-2 rounded-xl w-full mt-4"
+                rows={3}
+              />
             </div>
 
             {/* Pricing */}
@@ -178,7 +213,7 @@ const AddMedicine: React.FC = () => {
                   value={form.price}
                   placeholder="Price (Rs)"
                   onChange={handleChange}
-                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="border px-4 py-2 rounded-xl"
                   required
                 />
 
@@ -189,7 +224,7 @@ const AddMedicine: React.FC = () => {
                   value={form.stock}
                   placeholder="Stock Quantity"
                   onChange={handleChange}
-                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="border px-4 py-2 rounded-xl"
                   required
                 />
               </div>
@@ -208,7 +243,7 @@ const AddMedicine: React.FC = () => {
                   min={new Date().toISOString().split("T")[0]}
                   value={form.expiry}
                   onChange={handleChange}
-                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="border px-4 py-2 rounded-xl"
                   required
                 />
 
@@ -217,13 +252,13 @@ const AddMedicine: React.FC = () => {
                   value={form.supplier}
                   placeholder="Supplier Name"
                   onChange={handleChange}
-                  className="border px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="border px-4 py-2 rounded-xl"
                 />
               </div>
             </div>
           </div>
 
-          {/* Right Summary */}
+          {/* Right Preview */}
           <div className="bg-white rounded-2xl shadow-xl p-6 h-fit sticky top-24">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <CheckCircle className="text-green-600" />
@@ -244,13 +279,19 @@ const AddMedicine: React.FC = () => {
                 <b>Manufacturer:</b> {form.manufacturer || "—"}
               </li>
               <li>
+                <b>Description:</b> {form.description || "—"}
+              </li>
+              <li>
                 <b>Price:</b> {form.price ? `Rs ${form.price}` : "—"}
               </li>
               <li>
                 <b>Stock:</b> {form.stock || "—"}
               </li>
               <li>
-                <b>Expiry:</b> {form.expiry || "—"}
+                <b>Status:</b> {stockStatus}
+              </li>
+              <li>
+                <b>Expiry:</b> {formatDate(form.expiry)}
               </li>
               <li>
                 <b>Supplier:</b> {form.supplier || "—"}
@@ -274,8 +315,8 @@ const AddMedicine: React.FC = () => {
             <div className="border-t mt-4 pt-4 space-y-3">
               <button
                 type="submit"
-                disabled={!isFormValid}
-                className={`w-full py-3 rounded-xl text-white shadow transition ${
+                disabled={!isFormValid || success}
+                className={`w-full py-3 rounded-xl text-white shadow ${
                   isFormValid
                     ? "bg-blue-600 hover:bg-blue-700"
                     : "bg-gray-400 cursor-not-allowed"
@@ -287,7 +328,7 @@ const AddMedicine: React.FC = () => {
               <button
                 type="button"
                 onClick={handleReset}
-                className="w-full flex items-center justify-center gap-2 border py-2 rounded-xl hover:bg-gray-50 transition"
+                className="w-full flex items-center justify-center gap-2 border py-2 rounded-xl hover:bg-gray-50"
               >
                 <RefreshCcw size={14} />
                 Clear Form
