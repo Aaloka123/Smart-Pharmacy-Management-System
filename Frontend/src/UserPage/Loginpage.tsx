@@ -16,6 +16,7 @@ const Login: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [capsLock, setCapsLock] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,6 +42,10 @@ const Login: React.FC = () => {
 
   const validateEmail = (email: string) => {
     return /\S+@\S+\.\S+/.test(email);
+  };
+
+  const handleCapsLock = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    setCapsLock(e.getModifierState("CapsLock"));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -97,7 +102,7 @@ const Login: React.FC = () => {
 
       {/* Right Form */}
       <div className="flex items-center justify-center bg-gray-100 p-6">
-        <div className="bg-white shadow-2xl rounded-2xl w-full max-w-md p-8">
+        <div className="bg-white shadow-2xl rounded-2xl w-full max-w-md p-8 hover:shadow-3xl transition">
           <h2 className="text-2xl font-bold text-center mb-2">
             {isLogin ? "Welcome Back 👋" : "Create Account"}
           </h2>
@@ -115,7 +120,7 @@ const Login: React.FC = () => {
                 setIsLogin(true);
                 resetForm();
               }}
-              className={`w-1/2 py-2 font-semibold transition ${
+              className={`w-1/2 py-2 font-semibold ${
                 isLogin ? "bg-blue-600 text-white" : "hover:bg-gray-200"
               }`}
             >
@@ -127,7 +132,7 @@ const Login: React.FC = () => {
                 setIsLogin(false);
                 resetForm();
               }}
-              className={`w-1/2 py-2 font-semibold transition ${
+              className={`w-1/2 py-2 font-semibold ${
                 !isLogin ? "bg-blue-600 text-white" : "hover:bg-gray-200"
               }`}
             >
@@ -166,10 +171,6 @@ const Login: React.FC = () => {
                 }}
                 className="w-full border pl-10 pr-4 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
               />
-
-              <p className="text-xs text-gray-400 mt-1">
-                Enter a valid email address
-              </p>
             </div>
 
             <div className="relative">
@@ -179,6 +180,7 @@ const Login: React.FC = () => {
                 placeholder="Enter password"
                 value={password}
                 disabled={loading}
+                onKeyUp={handleCapsLock}
                 onChange={(e) => {
                   setPassword(e.target.value);
                   resetErrors();
@@ -187,16 +189,15 @@ const Login: React.FC = () => {
               />
 
               <span
-                title="Toggle password visibility"
                 className="absolute right-3 top-3 cursor-pointer text-gray-500"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </span>
 
-              <p className="text-xs text-gray-400 mt-1">
-                Password must be at least 6 characters.
-              </p>
+              {capsLock && (
+                <p className="text-yellow-600 text-xs mt-1">Caps Lock is ON</p>
+              )}
             </div>
 
             {isLogin && (
@@ -224,7 +225,7 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2 rounded-lg font-semibold flex justify-center items-center gap-2 transition-all duration-200 ${
+              className={`w-full py-2 rounded-lg font-semibold flex justify-center items-center gap-2 transition ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed text-white"
                   : "bg-blue-600 hover:bg-blue-700 text-white"
@@ -233,14 +234,11 @@ const Login: React.FC = () => {
               {loading && <Loader2 size={18} className="animate-spin" />}
               {loading ? "Processing..." : isLogin ? "Login" : "Create Account"}
             </button>
-          </form>
 
-          {/* Demo Login Hint */}
-          {isLogin && (
-            <p className="text-xs text-gray-400 text-center mt-4">
-              Demo Login → admin@pharma.com / admin123
+            <p className="text-xs text-gray-400 text-center">
+              🔒 Secure encrypted login
             </p>
-          )}
+          </form>
 
           <p className="text-xs text-gray-400 text-center mt-6">
             © {new Date().getFullYear()} PharmaCare System
