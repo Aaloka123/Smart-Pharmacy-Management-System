@@ -23,7 +23,6 @@ const Login: React.FC = () => {
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState("");
 
-  // Auto-login if remembered
   useEffect(() => {
     const savedUser = localStorage.getItem("pharmaUser");
     if (savedUser) {
@@ -32,6 +31,13 @@ const Login: React.FC = () => {
   }, [navigate]);
 
   const resetErrors = () => setError("");
+
+  const resetForm = () => {
+    setEmail("");
+    setPassword("");
+    setName("");
+    setError("");
+  };
 
   const validateEmail = (email: string) => {
     return /\S+@\S+\.\S+/.test(email);
@@ -71,6 +77,7 @@ const Login: React.FC = () => {
       } else {
         alert("Account created successfully! Please login.");
         setIsLogin(true);
+        resetForm();
       }
 
       setLoading(false);
@@ -94,6 +101,7 @@ const Login: React.FC = () => {
           <h2 className="text-2xl font-bold text-center mb-2">
             {isLogin ? "Welcome Back 👋" : "Create Account"}
           </h2>
+
           <p className="text-center text-gray-500 mb-6">
             {isLogin
               ? "Login to manage your pharmacy"
@@ -105,28 +113,29 @@ const Login: React.FC = () => {
             <button
               onClick={() => {
                 setIsLogin(true);
-                resetErrors();
+                resetForm();
               }}
-              className={`w-1/2 py-2 font-semibold ${
-                isLogin ? "bg-blue-600 text-white" : ""
+              className={`w-1/2 py-2 font-semibold transition ${
+                isLogin ? "bg-blue-600 text-white" : "hover:bg-gray-200"
               }`}
             >
               Login
             </button>
+
             <button
               onClick={() => {
                 setIsLogin(false);
-                resetErrors();
+                resetForm();
               }}
-              className={`w-1/2 py-2 font-semibold ${
-                !isLogin ? "bg-blue-600 text-white" : ""
+              className={`w-1/2 py-2 font-semibold transition ${
+                !isLogin ? "bg-blue-600 text-white" : "hover:bg-gray-200"
               }`}
             >
               Sign Up
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {!isLogin && (
               <div className="relative">
                 <User className="absolute left-3 top-3 text-gray-400" />
@@ -134,6 +143,7 @@ const Login: React.FC = () => {
                   type="text"
                   placeholder="Full Name"
                   value={name}
+                  disabled={loading}
                   onChange={(e) => {
                     setName(e.target.value);
                     resetErrors();
@@ -149,8 +159,9 @@ const Login: React.FC = () => {
                 type="email"
                 placeholder="admin@pharma.com"
                 value={email}
+                disabled={loading}
                 onChange={(e) => {
-                  setEmail(e.target.value);
+                  setEmail(e.target.value.toLowerCase());
                   resetErrors();
                 }}
                 className="w-full border pl-10 pr-4 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
@@ -163,18 +174,25 @@ const Login: React.FC = () => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter password"
                 value={password}
+                disabled={loading}
                 onChange={(e) => {
                   setPassword(e.target.value);
                   resetErrors();
                 }}
                 className="w-full border pl-10 pr-10 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
               />
+
               <span
                 className="absolute right-3 top-3 cursor-pointer text-gray-500"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </span>
+
+              {/* Password helper text */}
+              <p className="text-xs text-gray-400 mt-1">
+                Password must be at least 6 characters.
+              </p>
             </div>
 
             {isLogin && (
@@ -183,10 +201,12 @@ const Login: React.FC = () => {
                   <input
                     type="checkbox"
                     checked={remember}
+                    disabled={loading}
                     onChange={() => setRemember(!remember)}
                   />
                   Remember Me
                 </label>
+
                 <span className="text-blue-600 cursor-pointer hover:underline">
                   Forgot Password?
                 </span>
@@ -200,19 +220,23 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2 rounded-lg font-semibold flex justify-center items-center gap-2 ${
+              className={`w-full py-2 rounded-lg font-semibold flex justify-center items-center gap-2 transition ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed text-white"
                   : "bg-blue-600 hover:bg-blue-700 text-white"
               }`}
             >
-              {loading && <Loader2 size={16} className="animate-spin" />}
+              {loading && <Loader2 size={18} className="animate-spin" />}
               {loading ? "Processing..." : isLogin ? "Login" : "Create Account"}
             </button>
           </form>
 
           <p className="text-xs text-gray-400 text-center mt-6">
             © {new Date().getFullYear()} PharmaCare System
+          </p>
+
+          <p className="text-xs text-gray-400 text-center mt-2">
+            Secure login powered by PharmaCare authentication
           </p>
         </div>
       </div>
