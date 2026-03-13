@@ -166,6 +166,10 @@ const Login: React.FC = () => {
                 }}
                 className="w-full border pl-10 pr-4 py-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
               />
+
+              <p className="text-xs text-gray-400 mt-1">
+                Enter a valid email address
+              </p>
             </div>
 
             <div className="relative">
@@ -183,13 +187,13 @@ const Login: React.FC = () => {
               />
 
               <span
+                title="Toggle password visibility"
                 className="absolute right-3 top-3 cursor-pointer text-gray-500"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </span>
 
-              {/* Password helper text */}
               <p className="text-xs text-gray-400 mt-1">
                 Password must be at least 6 characters.
               </p>
@@ -220,7 +224,7 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2 rounded-lg font-semibold flex justify-center items-center gap-2 transition ${
+              className={`w-full py-2 rounded-lg font-semibold flex justify-center items-center gap-2 transition-all duration-200 ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed text-white"
                   : "bg-blue-600 hover:bg-blue-700 text-white"
@@ -231,12 +235,15 @@ const Login: React.FC = () => {
             </button>
           </form>
 
+          {/* Demo Login Hint */}
+          {isLogin && (
+            <p className="text-xs text-gray-400 text-center mt-4">
+              Demo Login → admin@pharma.com / admin123
+            </p>
+          )}
+
           <p className="text-xs text-gray-400 text-center mt-6">
             © {new Date().getFullYear()} PharmaCare System
-          </p>
-
-          <p className="text-xs text-gray-400 text-center mt-2">
-            Secure login powered by PharmaCare authentication
           </p>
         </div>
       </div>
