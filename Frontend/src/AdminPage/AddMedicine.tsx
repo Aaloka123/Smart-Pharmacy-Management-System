@@ -11,6 +11,9 @@ import {
   CheckCircle,
   RotateCcw,
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import Header from "../UserComponent/Header";
+import Footer from "../UserComponent/Footer";
 
 const AddMedicine: React.FC = () => {
   const [form, setForm] = useState({
